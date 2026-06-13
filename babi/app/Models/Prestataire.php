@@ -16,11 +16,16 @@ class Prestataire extends Model
         'specialite',
         'localisation',
         'note_moyenne',
-        'disponible',
+        'id_categorie',
     ];
 
     public function services()
     {
         return $this->hasMany(Service::class, 'id_prestataire');
+    }
+
+    public function categorie()
+    {
+        return $this->belongsTo(Categorie::class, 'id_categorie');
     }
 }
