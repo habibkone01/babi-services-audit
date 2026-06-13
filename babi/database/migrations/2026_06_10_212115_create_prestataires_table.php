@@ -17,10 +17,10 @@ return new class extends Migration
         $table->string('prenom');
         $table->string('email')->unique();
         $table->string('telephone', 20)->nullable();
-        $table->string('specialite', 100);
         $table->string('localisation', 255)->nullable();
         $table->decimal('note_moyenne', 3, 2)->default(0);
-        $table->boolean('disponible')->default(true);
+        $table->unsignedBigInteger('id_categorie');
+        $table->foreign('id_categorie')->references('id_categorie')->on('categories');
         $table->timestamps();
     });
     }
