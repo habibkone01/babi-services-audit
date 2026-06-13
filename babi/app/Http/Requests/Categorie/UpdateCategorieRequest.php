@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Categorie;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreCategorieRequest extends FormRequest
+class UpdateCategorieRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,7 +23,7 @@ class StoreCategorieRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nom_categorie' => 'required|string|max:100|unique:categories',
+            'nom_categorie' => 'sometimes|string|max:100|unique:categories,nom_categorie,' . $this->route('categorie') . ',id_categorie',
             'description'   => 'nullable|string',
         ];
     }
