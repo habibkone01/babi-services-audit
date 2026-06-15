@@ -1,0 +1,28 @@
+import { Link } from 'react-router-dom'
+
+function Navbar() {
+  return (
+    <nav className="sticky top-0 bg-white shadow-sm z-50">
+      <div className="max-w-7xl mx-auto px-8 py-4 flex justify-between items-center">
+        <div className="flex items-center gap-2">
+          <div className="w-2 h-2 bg-gradient-to-r from-babi-orange to-babi-orange-light rounded-full"></div>
+          <span className="text-xl font-extrabold text-babi-dark font-bricolage">babi</span>
+          <span className="text-xs font-semibold font-hanken text-babi-orange uppercase tracking-wider">services</span>
+        </div>
+        <div className="hidden md:flex gap-8">
+          <a href="#services" className="text-gray-700 font-medium hover:text-babi-orange transition-colors">Services</a>
+          <a href="#how-it-works" className="text-gray-700 font-medium hover:text-babi-orange transition-colors">Comment ça marche</a>
+          <a href="#become-pro" className="text-gray-700 font-medium hover:text-babi-orange transition-colors">Devenir prestataire</a>
+        </div>
+        <div className="flex gap-4 items-center">
+          <button className="text-gray-700 font-semibold hover:text-babi-orange transition-colors">Connexion</button>
+          <Link to="/inscription" className="bg-[#F2701E] text-white px-5 py-2 rounded-full font-semibold hover:shadow-lg hover:-translate-y-0.5 transition-all">
+            S'inscrire
+          </Link>
+        </div>
+      </div>
+    </nav>
+  )
+}
+
+export default Navbar
