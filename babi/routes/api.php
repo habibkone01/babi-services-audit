@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\PrestaireController;
 use App\Http\Controllers\Api\CategorieController;
 use App\Http\Controllers\Api\ServiceController;
 use App\Http\Controllers\Api\ReservationController;
+use App\Http\Controllers\Api\AvisController;
 use App\Http\Controllers\Api\AdminDashboardController;
 use App\Http\Controllers\Api\AuthController;
 use Illuminate\Http\Request;
@@ -21,6 +22,7 @@ Route::apiResource('prestataires', PrestaireController::class);
 Route::apiResource('categories', CategorieController::class);
 Route::apiResource('services', ServiceController::class);
 Route::apiResource('reservations', ReservationController::class);
+Route::apiResource('avis', AvisController::class);
 
 
 Route::get('admin/dashboard', [AdminDashboardController::class, 'index']);

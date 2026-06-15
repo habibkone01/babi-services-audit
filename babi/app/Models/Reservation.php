@@ -25,4 +25,9 @@ class Reservation extends Model
     {
         return $this->belongsTo(Service::class, 'id_service');
     }
+
+    public function avis()
+    {
+        return $this->hasOne(Avis::class, 'id_reservation');
+    }
 }
