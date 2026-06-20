@@ -8,7 +8,7 @@ const ArrowLeftIcon = () => (
 
 const CheckIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 20 20" fill="none">
-    <path d="M16.6667 5L7.5 14.1667L3.33333 10" stroke="#F2701E" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M16.6667 5L7.5 14.1667L3.33333 10" stroke="#059669" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 )
 
@@ -40,7 +40,7 @@ const checklist = [
 function SignUp() {
   return (
     <div className="min-h-screen flex flex-col lg:flex-row">
-      <div className="lg:w-1/2 bg-gradient-to-br from-babi-orange to-babi-orange-light p-10 md:p-16 flex flex-col justify-between min-h-[400px] lg:min-h-screen">
+      <div className="lg:w-1/2 bg-gradient-to-br from-babi-green to-babi-green-light p-10 md:p-16 flex flex-col justify-between min-h-[400px] lg:min-h-screen">
         <div className="flex items-center gap-2">
           <div className="w-2.5 h-2.5 bg-white rounded-full"></div>
           <span className="text-xl font-extrabold font-bricolage">
@@ -74,7 +74,7 @@ function SignUp() {
             "Trouvé une coiffeuse en 5 minutes pour mon mariage !"
           </p>
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-orange-100 text-orange-700 flex items-center justify-center font-bold text-sm">
+            <div className="w-9 h-9 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-sm">
               CA
             </div>
             <p className="text-gray-500 text-sm">Christelle, Cocody</p>
@@ -84,7 +84,7 @@ function SignUp() {
 
       <div className="lg:w-1/2 bg-babi-cream flex flex-col justify-center px-6 sm:px-12 lg:px-20 py-12">
         <div className="max-w-md w-full mx-auto">
-          <Link to="/" className="inline-flex items-center gap-2 text-gray-500 hover:text-babi-orange transition-colors mb-8">
+          <Link to="/" className="inline-flex items-center gap-2 text-gray-500 hover:text-babi-green transition-colors mb-8">
             <ArrowLeftIcon />
             Accueil
           </Link>
@@ -96,7 +96,7 @@ function SignUp() {
             Rejoignez Babi Services en moins d'une minute.
           </p>
 
-          <button className="w-full flex items-center justify-center gap-2 bg-orange-50 border border-babi-orange text-babi-orange font-semibold py-3.5 rounded-2xl mb-6">
+          <button className="w-full flex items-center justify-center gap-2 bg-emerald-50 border border-babi-green text-babi-green font-semibold py-3.5 rounded-2xl mb-6">
             <UserIcon />
             Je cherche un service
           </button>
@@ -107,7 +107,7 @@ function SignUp() {
               <input
                 type="text"
                 placeholder="Ex : Awa Koné"
-                className="w-full border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-babi-orange transition-colors bg-white"
+                className="w-full border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-babi-green transition-colors bg-white"
               />
             </div>
             <div>
@@ -115,7 +115,7 @@ function SignUp() {
               <input
                 type="tel"
                 placeholder="+225 07 00 00 00 00"
-                className="w-full border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-babi-orange transition-colors bg-white"
+                className="w-full border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-babi-green transition-colors bg-white"
               />
             </div>
             <div>
@@ -123,11 +123,11 @@ function SignUp() {
               <input
                 type="password"
                 placeholder="········"
-                className="w-full border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-babi-orange transition-colors bg-white"
+                className="w-full border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-babi-green transition-colors bg-white"
               />
             </div>
 
-            <button type="submit" className="w-full bg-gradient-to-r from-babi-orange to-babi-orange-light text-white font-bold py-3.5 rounded-2xl hover:-translate-y-1 hover:shadow-xl transition-all mt-2">
+            <button type="submit" className="w-full bg-gradient-to-r from-babi-green to-babi-green-light text-white font-bold py-3.5 rounded-2xl hover:-translate-y-1 hover:shadow-xl transition-all mt-2">
               Créer mon compte
             </button>
           </form>
@@ -138,13 +138,13 @@ function SignUp() {
             <div className="flex-1 h-px bg-gray-200"></div>
           </div>
 
-          <button className="w-full flex items-center justify-center gap-2 bg-white border border-gray-200 text-babi-dark font-semibold py-3.5 rounded-2xl hover:border-babi-orange transition-colors">
+          <button className="w-full flex items-center justify-center gap-2 bg-white border border-gray-200 text-babi-dark font-semibold py-3.5 rounded-2xl hover:border-babi-green transition-colors">
             <GoogleIcon />
             Continuer avec Google
           </button>
 
           <p className="text-center text-gray-500 mt-6">
-            Déjà un compte ? <Link to="#" className="text-babi-orange font-semibold hover:underline">Se connecter</Link>
+            Déjà un compte ? <Link to="#" className="text-babi-green font-semibold hover:underline">Se connecter</Link>
           </p>
         </div>
       </div>

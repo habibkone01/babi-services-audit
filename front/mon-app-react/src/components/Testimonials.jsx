@@ -7,7 +7,7 @@ const StarIcon = () => (
 const testimonials = [
   {
     text: "J'ai trouvé une coiffeuse en 5 minutes pour un mariage. Elle est venue à l'heure, travail impeccable. Babi Services m'a sauvée !",
-    avatarColor: 'bg-orange-100 text-orange-700',
+    avatarColor: 'bg-emerald-100 text-emerald-700',
     initials: 'CA',
     name: 'Christelle A.',
     role: 'Cliente · Cocody'
@@ -32,8 +32,8 @@ function Testimonials() {
   return (
     <section className="py-16 px-8 bg-babi-cream">
       <div className="max-w-7xl mx-auto text-center">
-        <span className="text-xs font-bold text-babi-orange uppercase tracking-wider relative pl-10 inline-block mb-4">
-          <span className="absolute left-0 top-1/2 -translate-y-1/2 w-8 h-0.5 bg-gradient-to-r from-babi-orange to-babi-orange-light rounded"></span>
+        <span className="text-xs font-bold text-babi-green uppercase tracking-wider relative pl-10 inline-block mb-4">
+          <span className="absolute left-0 top-1/2 -translate-y-1/2 w-8 h-0.5 bg-gradient-to-r from-babi-green to-babi-green-light rounded"></span>
           ILS NOUS FONT CONFIANCE
         </span>
         <h2 className="text-2xl md:text-3xl font-extrabold text-babi-dark mb-8 font-bricolage">

@@ -9,7 +9,7 @@ function FinalCTA() {
     <section className="py-16 px-8">
       <div className="max-w-7xl mx-auto">
         <div className="relative bg-babi-dark rounded-3xl p-12 text-center overflow-hidden">
-          <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-babi-orange/30 rounded-full blur-3xl"></div>
+          <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-babi-green/30 rounded-full blur-3xl"></div>
           <div className="relative z-10">
             <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4 font-bricolage">
               Prêt à trouver votre pro ?
@@ -18,7 +18,7 @@ function FinalCTA() {
               Des milliers de prestataires vous attendent, partout à Abidjan.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <button className="inline-flex items-center gap-2 bg-gradient-to-r from-babi-orange to-babi-orange-light text-white px-8 py-4 rounded-2xl font-bold hover:-translate-y-1 hover:shadow-xl transition-all">
+              <button className="inline-flex items-center gap-2 bg-gradient-to-r from-babi-green to-babi-green-light text-white px-8 py-4 rounded-2xl font-bold hover:-translate-y-1 hover:shadow-xl transition-all">
                 <SearchIcon />
                 Chercher un service
               </button>

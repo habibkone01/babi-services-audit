@@ -14,7 +14,7 @@ function ProCTA() {
   return (
     <section className="py-16 px-8" id="become-pro">
       <div className="max-w-7xl mx-auto">
-        <div className="bg-gradient-to-br from-babi-orange to-babi-orange-light rounded-3xl p-10 md:p-12 flex flex-col lg:flex-row items-center gap-10">
+        <div className="bg-gradient-to-br from-babi-green to-babi-green-light rounded-3xl p-10 md:p-12 flex flex-col lg:flex-row items-center gap-10">
           <div className="flex-1">
             <span className="text-xs font-bold text-white/80 uppercase tracking-wider relative pl-10 inline-block mb-4">
               <span className="absolute left-0 top-1/2 -translate-y-1/2 w-8 h-0.5 bg-white/60 rounded"></span>

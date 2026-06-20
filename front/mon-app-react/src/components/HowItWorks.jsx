@@ -60,10 +60,10 @@ function HowItWorks() {
     <section className="py-16 px-8 bg-babi-cream" id="how-it-works">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <span className="inline-block text-xs font-bold text-babi-orange uppercase tracking-wider relative px-10 mb-3">
+          <span className="inline-block text-xs font-bold text-babi-green uppercase tracking-wider relative px-10 mb-3">
             SIMPLE & RAPIDE
-            <span className="absolute left-0 top-1/2 -translate-y-1/2 w-8 h-0.5 bg-gradient-to-r from-babi-orange to-babi-orange-light rounded"></span>
-            <span className="absolute right-0 top-1/2 -translate-y-1/2 w-8 h-0.5 bg-gradient-to-r from-babi-orange-light to-babi-orange rounded"></span>
+            <span className="absolute left-0 top-1/2 -translate-y-1/2 w-8 h-0.5 bg-gradient-to-r from-babi-green to-babi-green-light rounded"></span>
+            <span className="absolute right-0 top-1/2 -translate-y-1/2 w-8 h-0.5 bg-gradient-to-r from-babi-green-light to-babi-green rounded"></span>
           </span>
           <h2 className="text-3xl md:text-4xl font-extrabold text-babi-dark mb-3 font-bricolage">
             Comment ça marche
@@ -76,11 +76,11 @@ function HowItWorks() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {steps.map((step, index) => (
             <div key={index} className="bg-white border border-gray-100 rounded-2xl p-8 relative shadow-sm">
-              <span className="text-5xl font-extrabold text-orange-100 absolute top-4 right-6 font-bricolage">
+              <span className="text-5xl font-extrabold text-emerald-100 absolute top-4 right-6 font-bricolage">
                 {step.number}
               </span>
               <div className="flex items-center gap-4 mb-5">
-                <span className="text-2xl bg-gradient-to-r from-babi-orange to-babi-orange-light p-3 rounded-xl text-white">
+                <span className="text-2xl bg-gradient-to-r from-babi-green to-babi-green-light p-3 rounded-xl text-white">
                   {step.icon}
                 </span>
               </div>

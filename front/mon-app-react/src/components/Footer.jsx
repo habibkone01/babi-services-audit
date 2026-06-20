@@ -42,22 +42,22 @@ function Footer() {
         <div className="flex flex-col md:flex-row justify-between gap-10 mb-10 pb-8 border-b border-white/10">
           <div className="flex-1 max-w-sm">
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-2.5 h-2.5 bg-gradient-to-r from-babi-orange to-babi-orange-light rounded-full"></div>
+              <div className="w-2.5 h-2.5 bg-gradient-to-r from-babi-green to-babi-green-light rounded-full"></div>
               <span className="text-xl font-extrabold font-bricolage">
-                <span className="text-white">babi</span> <span className="text-babi-orange">services</span>
+                <span className="text-white">babi</span> <span className="text-babi-green">services</span>
               </span>
             </div>
             <p className="text-white/50 mb-4">
               La plateforme qui relie les Abidjanais aux meilleurs prestataires de services, près de chez eux.
             </p>
             <div className="flex items-center gap-3">
-              <a href="#" className="w-9 h-9 flex items-center justify-center bg-white/10 hover:bg-babi-orange rounded-lg text-white transition-colors">
+              <a href="#" className="w-9 h-9 flex items-center justify-center bg-white/10 hover:bg-babi-green rounded-lg text-white transition-colors">
                 <FacebookIcon />
               </a>
-              <a href="#" className="w-9 h-9 flex items-center justify-center bg-white/10 hover:bg-babi-orange rounded-lg text-white transition-colors">
+              <a href="#" className="w-9 h-9 flex items-center justify-center bg-white/10 hover:bg-babi-green rounded-lg text-white transition-colors">
                 <InstagramIcon />
               </a>
-              <a href="#" className="w-9 h-9 flex items-center justify-center bg-white/10 hover:bg-babi-orange rounded-lg text-white transition-colors">
+              <a href="#" className="w-9 h-9 flex items-center justify-center bg-white/10 hover:bg-babi-green rounded-lg text-white transition-colors">
                 <SendIcon />
               </a>
             </div>
@@ -67,7 +67,7 @@ function Footer() {
               <div key={index} className="flex flex-col gap-3">
                 <h4 className="text-white font-bold mb-1">{column.title}</h4>
                 {column.links.map((link, i) => (
-                  <a key={i} href="#" className="text-white/50 hover:text-babi-orange transition-colors">{link}</a>
+                  <a key={i} href="#" className="text-white/50 hover:text-babi-green transition-colors">{link}</a>
                 ))}
               </div>
             ))}
