@@ -10,7 +10,7 @@ function Navbar() {
           <span className="text-xs font-semibold font-hanken text-babi-green uppercase tracking-wider">services</span>
         </div>
         <div className="hidden md:flex gap-8">
-          <a href="#services" className="text-gray-700 font-medium hover:text-babi-green transition-colors">Services</a>
+          <Link to="/services" className="text-gray-700 font-medium hover:text-babi-green transition-colors">Services</Link>
           <a href="#how-it-works" className="text-gray-700 font-medium hover:text-babi-green transition-colors">Comment ça marche</a>
           <a href="#become-pro" className="text-gray-700 font-medium hover:text-babi-green transition-colors">Devenir prestataire</a>
         </div>
