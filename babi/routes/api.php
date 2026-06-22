@@ -16,13 +16,13 @@ Route::post('login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::get('me', [AuthController::class, 'me']);
+    Route::apiResource('reservations', ReservationController::class);
+    Route::apiResource('avis', AvisController::class);
 });
 
 Route::apiResource('prestataires', PrestaireController::class);
 Route::apiResource('categories', CategorieController::class);
 Route::apiResource('services', ServiceController::class);
-Route::apiResource('reservations', ReservationController::class);
-Route::apiResource('avis', AvisController::class);
 
 
 Route::get('admin/dashboard', [AdminDashboardController::class, 'index']);

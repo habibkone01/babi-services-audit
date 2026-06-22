@@ -14,7 +14,11 @@ class AvisController extends Controller
      */
     public function index()
     {
-        return response()->json(Avis::with(['utilisateur', 'reservation'])->get());
+        return response()->json(
+            Avis::with(['utilisateur', 'reservation'])
+                ->where('id_utilisateur', auth()->id())
+                ->get()
+        );
     }
 
     /**
@@ -22,7 +26,10 @@ class AvisController extends Controller
      */
     public function store(StoreAvisRequest $request)
     {
-        $avis = Avis::create($request->validated());
+        $avis = Avis::create([
+            ...$request->validated(),
+            'id_utilisateur' => auth()->id(),
+        ]);
         return response()->json($avis, 201);
     }
 
@@ -32,6 +39,7 @@ class AvisController extends Controller
     public function show(string $id)
     {
         $avis = Avis::with(['utilisateur', 'reservation'])->findOrFail($id);
+        abort_if($avis->id_utilisateur !== auth()->id(), 403);
         return response()->json($avis);
     }
 
@@ -41,6 +49,7 @@ class AvisController extends Controller
     public function update(UpdateAvisRequest $request, string $id)
     {
         $avis = Avis::findOrFail($id);
+        abort_if($avis->id_utilisateur !== auth()->id(), 403);
         $avis->update($request->validated());
         return response()->json($avis);
     }
@@ -51,6 +60,7 @@ class AvisController extends Controller
     public function destroy(string $id)
     {
         $avis = Avis::findOrFail($id);
+        abort_if($avis->id_utilisateur !== auth()->id(), 403);
         $avis->delete();
         return response()->json(['message' => 'Avis supprimé']);
     }

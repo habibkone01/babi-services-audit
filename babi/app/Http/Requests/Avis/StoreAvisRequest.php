@@ -26,7 +26,6 @@ class StoreAvisRequest extends FormRequest
             'note'           => 'required|integer|min:1|max:5',
             'commentaire'    => 'nullable|string',
             'date_avis'      => 'required|date',
-            'id_utilisateur' => 'required|exists:utilisateurs,id_utilisateur',
             'id_reservation' => 'required|exists:reservations,id_reservation|unique:avis,id_reservation',
         ];
     }

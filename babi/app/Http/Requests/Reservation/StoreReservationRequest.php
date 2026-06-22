@@ -26,7 +26,6 @@ class StoreReservationRequest extends FormRequest
             'date_reservation'  => 'required|date',
             'heure_reservation' => 'required|date_format:H:i',
             'statut'            => 'in:en_attente,confirmee,annulee,terminee',
-            'id_utilisateur'    => 'required|exists:utilisateurs,id_utilisateur',
             'id_service'        => 'required|exists:services,id_service',
         ];
     }

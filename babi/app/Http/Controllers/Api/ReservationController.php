@@ -14,7 +14,12 @@ class ReservationController extends Controller
      */
     public function index()
     {
-        return response()->json(Reservation::with(['utilisateur', 'service'])->get());
+        return response()->json(
+            Reservation::with(['utilisateur', 'service.prestataire'])
+                ->where('id_utilisateur', auth()->id())
+                ->orderByDesc('date_reservation')
+                ->get()
+        );
     }
 
     /**
@@ -22,7 +27,10 @@ class ReservationController extends Controller
      */
     public function store(StoreReservationRequest $request)
     {
-        $reservation = Reservation::create($request->validated());
+        $reservation = Reservation::create([
+            ...$request->validated(),
+            'id_utilisateur' => auth()->id(),
+        ]);
         return response()->json($reservation, 201);
     }
 
@@ -31,7 +39,8 @@ class ReservationController extends Controller
      */
     public function show(string $id)
     {
-        $reservation = Reservation::with(['utilisateur', 'service'])->findOrFail($id);
+        $reservation = Reservation::with(['utilisateur', 'service.prestataire'])->findOrFail($id);
+        abort_if($reservation->id_utilisateur !== auth()->id(), 403);
         return response()->json($reservation);
     }
 
@@ -41,6 +50,7 @@ class ReservationController extends Controller
     public function update(UpdateReservationRequest $request, string $id)
     {
         $reservation = Reservation::findOrFail($id);
+        abort_if($reservation->id_utilisateur !== auth()->id(), 403);
         $reservation->update($request->validated());
         return response()->json($reservation);
     }
@@ -51,6 +61,7 @@ class ReservationController extends Controller
     public function destroy(string $id)
     {
         $reservation = Reservation::findOrFail($id);
+        abort_if($reservation->id_utilisateur !== auth()->id(), 403);
         $reservation->delete();
         return response()->json(['message' => 'Réservation supprimée']);
     }
