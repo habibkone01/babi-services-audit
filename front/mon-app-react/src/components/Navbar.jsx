@@ -15,7 +15,7 @@ function Navbar() {
           <a href="#become-pro" className="text-gray-700 font-medium hover:text-babi-green transition-colors">Devenir prestataire</a>
         </div>
         <div className="flex gap-4 items-center">
-          <button className="text-gray-700 font-semibold hover:text-babi-green transition-colors">Connexion</button>
+          <Link to="/connexion" className="text-gray-700 font-semibold hover:text-babi-green transition-colors">Connexion</Link>
           <Link to="/inscription" className="bg-[#059669] text-white px-5 py-2 rounded-full font-semibold hover:shadow-lg hover:-translate-y-0.5 transition-all">
             S'inscrire
           </Link>

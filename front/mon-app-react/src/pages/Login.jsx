@@ -14,13 +14,6 @@ const CheckIcon = () => (
   </svg>
 )
 
-const UserIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none">
-    <path d="M16.6667 17.5V15.8333C16.6667 14.0652 15.3334 12.5 13.5652 12.5H6.43478C4.66667 12.5 3.33333 14.0652 3.33333 15.8333V17.5" stroke="currentColor" strokeWidth="1.66667" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M10 9.16667C11.8409 9.16667 13.3333 7.67428 13.3333 5.83333C13.3333 3.99238 11.8409 2.5 10 2.5C8.15905 2.5 6.66667 3.99238 6.66667 5.83333C6.66667 7.67428 8.15905 9.16667 10 9.16667Z" stroke="currentColor" strokeWidth="1.66667" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-)
-
 const StarIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="#FBBF24">
     <path d="M10 1.66602L12.5729 6.87928L18.3333 7.7202L14.1667 11.7793L15.1459 17.5152L10 14.8127L4.85413 17.5152L5.83333 11.7793L1.66667 7.7202L7.42706 6.87928L10 1.66602Z"/>
@@ -39,9 +32,9 @@ const checklist = [
   'Réservation en 2 clics'
 ]
 
-function SignUp() {
+function Login() {
   const navigate = useNavigate()
-  const [form, setForm] = useState({ prenom: '', nom: '', email: '', telephone: '', mot_de_passe: '' })
+  const [form, setForm] = useState({ email: '', mot_de_passe: '' })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -54,11 +47,11 @@ function SignUp() {
     setError('')
     setLoading(true)
     try {
-      const data = await api.post('register', form)
+      const data = await api.post('login', form)
       localStorage.setItem('token', data.token)
-      navigate('/')
+      navigate('/dashboard')
     } catch (err) {
-      setError(err.message || 'Inscription impossible, vérifiez vos informations.')
+      setError(err.message || 'Identifiants incorrects.')
     } finally {
       setLoading(false)
     }
@@ -116,47 +109,16 @@ function SignUp() {
           </Link>
 
           <h2 className="text-3xl font-extrabold text-babi-dark font-bricolage mb-2">
-            Créer un compte
+            Content de vous revoir
           </h2>
           <p className="text-gray-500 mb-6">
-            Rejoignez Babi Services en moins d'une minute.
+            Connectez-vous pour gérer vos réservations.
           </p>
-
-          <button className="w-full flex items-center justify-center gap-2 bg-emerald-50 border border-babi-green text-babi-green font-semibold py-3.5 rounded-2xl mb-6">
-            <UserIcon />
-            Je cherche un service
-          </button>
 
           <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
             {error && (
               <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-2.5">{error}</p>
             )}
-            <div className="flex gap-4">
-              <div className="flex-1">
-                <label className="block text-sm font-semibold text-babi-dark mb-1.5">Prénom</label>
-                <input
-                  type="text"
-                  name="prenom"
-                  value={form.prenom}
-                  onChange={handleChange}
-                  placeholder="Awa"
-                  required
-                  className="w-full border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-babi-green transition-colors bg-white"
-                />
-              </div>
-              <div className="flex-1">
-                <label className="block text-sm font-semibold text-babi-dark mb-1.5">Nom</label>
-                <input
-                  type="text"
-                  name="nom"
-                  value={form.nom}
-                  onChange={handleChange}
-                  placeholder="Koné"
-                  required
-                  className="w-full border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-babi-green transition-colors bg-white"
-                />
-              </div>
-            </div>
             <div>
               <label className="block text-sm font-semibold text-babi-dark mb-1.5">Email</label>
               <input
@@ -170,17 +132,6 @@ function SignUp() {
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-babi-dark mb-1.5">Téléphone</label>
-              <input
-                type="tel"
-                name="telephone"
-                value={form.telephone}
-                onChange={handleChange}
-                placeholder="+225 07 00 00 00 00"
-                className="w-full border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-babi-green transition-colors bg-white"
-              />
-            </div>
-            <div>
               <label className="block text-sm font-semibold text-babi-dark mb-1.5">Mot de passe</label>
               <input
                 type="password"
@@ -189,7 +140,6 @@ function SignUp() {
                 onChange={handleChange}
                 placeholder="········"
                 required
-                minLength={8}
                 className="w-full border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-babi-green transition-colors bg-white"
               />
             </div>
@@ -199,7 +149,7 @@ function SignUp() {
               disabled={loading}
               className="w-full bg-gradient-to-r from-babi-green to-babi-green-light text-white font-bold py-3.5 rounded-2xl hover:-translate-y-1 hover:shadow-xl transition-all mt-2 disabled:opacity-60 disabled:hover:-translate-y-0"
             >
-              {loading ? 'Création...' : 'Créer mon compte'}
+              {loading ? 'Connexion...' : 'Se connecter'}
             </button>
           </form>
 
@@ -215,7 +165,7 @@ function SignUp() {
           </button>
 
           <p className="text-center text-gray-500 mt-6">
-            Déjà un compte ? <Link to="/connexion" className="text-babi-green font-semibold hover:underline">Se connecter</Link>
+            Pas encore de compte ? <Link to="/inscription" className="text-babi-green font-semibold hover:underline">Créer un compte</Link>
           </p>
         </div>
       </div>
@@ -223,4 +173,4 @@ function SignUp() {
   )
 }
 
-export default SignUp
+export default Login
