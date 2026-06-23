@@ -116,12 +116,20 @@ export default function ServiceCard({ service }) {
           <span className="text-sm font-semibold text-[#0B2B26]">
             {tarif ? `${Number(tarif).toLocaleString("fr-FR")} F` : "Sur devis"}
           </span>
-          <Link
-            to={`/services/${id_service}`}
-            className="bg-[#0E9F6E] text-white text-sm font-medium px-4 py-2 rounded-full hover:bg-[#0C8A5F] transition-colors"
-          >
-            Voir le profil
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link
+              to={`/services/${id_service}`}
+              className="text-sm font-medium text-[#0B2B26] hover:text-[#0E9F6E] transition-colors px-3 py-2"
+            >
+              Voir le profil
+            </Link>
+            <Link
+              to={`/services/${id_service}/reserver`}
+              className="bg-[#0E9F6E] text-white text-sm font-medium px-4 py-2 rounded-full hover:bg-[#0C8A5F] transition-colors"
+            >
+              Réserver
+            </Link>
+          </div>
         </div>
       </div>
     </div>
