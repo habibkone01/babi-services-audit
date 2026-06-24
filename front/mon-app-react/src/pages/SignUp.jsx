@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import api from '../services/api'
+import { apiRegister } from '../services/api'
 
 const ArrowLeftIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="none">
@@ -53,15 +53,14 @@ function SignUp() {
     e.preventDefault()
     setError('')
     setLoading(true)
-    try {
-      const data = await api.post('register', form)
-      localStorage.setItem('token', data.token)
-      navigate('/')
-    } catch (err) {
-      setError(err.message || 'Inscription impossible, vérifiez vos informations.')
-    } finally {
+    const { ok, data } = await apiRegister(form)
+    if (!ok) {
+      setError(data.message || 'Inscription impossible, vérifiez vos informations.')
       setLoading(false)
+      return
     }
+    localStorage.setItem('token', data.token)
+    navigate('/')
   }
 
   return (
