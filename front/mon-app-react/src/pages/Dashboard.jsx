@@ -1,3 +1,7 @@
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { apiGetMe, apiGetReservations, apiGetServices, apiLogout } from '../services/api'
+
 const GridIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none">
     <path d="M2.5 3.33333C2.5 2.8731 2.8731 2.5 3.33333 2.5H8.33333C8.79357 2.5 9.16667 2.8731 9.16667 3.33333V8.33333C9.16667 8.79357 8.79357 9.16667 8.33333 9.16667H3.33333C2.8731 9.16667 2.5 8.79357 2.5 8.33333V3.33333Z" stroke="currentColor" strokeWidth="1.66667" strokeLinecap="round" strokeLinejoin="round"/>
@@ -91,38 +95,108 @@ const PhoneIcon = () => (
 
 const navItems = [
   { icon: <GridIcon />, label: 'Aperçu', active: true },
-  { icon: <CalendarIcon />, label: 'Réservations', badge: 2 },
-  { icon: <MessageIcon />, label: 'Messages', badge: 1 },
+  { icon: <CalendarIcon />, label: 'Réservations' },
+  { icon: <MessageIcon />, label: 'Messages' },
   { icon: <HeartIcon />, label: 'Favoris' },
   { icon: <SettingsIcon />, label: 'Paramètres' },
 ]
 
-const stats = [
-  { icon: <ClockIcon />, iconBg: 'bg-sky-50', value: '2', label: 'Réservations à venir' },
-  { icon: <CheckCircleIcon />, iconBg: 'bg-emerald-50', value: '14', label: 'Missions terminées' },
-  { icon: <HeartIcon fill="#E11D48" />, iconBg: 'bg-rose-50', value: '5', label: 'Prestataires favoris', iconColor: 'text-rose-600' },
-  { icon: <WalletIcon />, iconBg: 'bg-amber-50', value: '46 000 F', label: 'Dépensé ce mois' },
-]
-
-const recommandes = [
-  { initials: 'FD', bg: 'bg-amber-200 text-amber-700', nom: 'Fatou Diomandé', metier: 'Traiteur événementiel', note: '4.9' },
-  { initials: 'IO', bg: 'bg-rose-200 text-rose-700', nom: 'Ismaël Ouattara', metier: 'Déménageur', note: '4.6' },
-  { initials: 'AN', bg: 'bg-violet-200 text-violet-700', nom: "Adjoua N'Guessan", metier: 'Couturière', note: '4.8' },
-]
-
-const activites = [
-  { ref: 'BK-1042', initials: 'AT', bg: 'bg-violet-200 text-violet-700', nom: 'Awa Traoré', service: 'Coiffure à domicile', date: '31 mai 2026 · 10:00', statut: 'confirmée', montant: '12 000 F' },
-  { ref: 'BK-1039', initials: 'KY', bg: 'bg-amber-200 text-amber-700', nom: 'Kouadio Yao', service: 'Réparation fuite cuisine', date: '28 mai 2026 · 16:30', statut: 'en attente', montant: '5 000 F' },
-  { ref: 'BK-1021', initials: 'MC', bg: 'bg-sky-200 text-sky-700', nom: 'Mariam Cissé', service: 'Grand ménage', date: '20 mai 2026 · 08:00', statut: 'terminée', montant: '14 000 F' },
-]
+const statutLabels = {
+  en_attente: 'en attente',
+  confirmee: 'confirmée',
+  annulee: 'annulée',
+  terminee: 'terminée',
+}
 
 const statutStyles = {
-  'confirmée': 'bg-emerald-50 text-emerald-700',
-  'en attente': 'bg-amber-50 text-amber-700',
-  'terminée': 'bg-gray-100 text-gray-500',
+  en_attente: 'bg-amber-50 text-amber-700',
+  confirmee: 'bg-emerald-50 text-emerald-700',
+  annulee: 'bg-red-50 text-red-600',
+  terminee: 'bg-gray-100 text-gray-500',
+}
+
+const avatarPalette = [
+  'bg-violet-200 text-violet-700',
+  'bg-amber-200 text-amber-700',
+  'bg-sky-200 text-sky-700',
+  'bg-emerald-200 text-emerald-700',
+  'bg-rose-200 text-rose-700',
+]
+
+function avatarBg(index) {
+  return avatarPalette[index % avatarPalette.length]
+}
+
+function initials(prenom, nom) {
+  return `${(prenom?.[0] ?? '').toUpperCase()}${(nom?.[0] ?? '').toUpperCase()}`
+}
+
+function formatMontant(value) {
+  return `${Number(value ?? 0).toLocaleString('fr-FR')} F`
+}
+
+function formatDateHeure(dateReservation, heureReservation) {
+  if (!dateReservation) return '—'
+  const date = new Date(dateReservation).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })
+  const heure = heureReservation ? heureReservation.slice(0, 5) : ''
+  return heure ? `${date} · ${heure}` : date
 }
 
 function Dashboard() {
+  const navigate = useNavigate()
+  const [user, setUser] = useState(null)
+  const [reservations, setReservations] = useState([])
+  const [recommandes, setRecommandes] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    Promise.all([apiGetMe(), apiGetReservations(), apiGetServices()]).then(
+      ([me, reservationsRes, servicesRes]) => {
+        if (me.ok) setUser(me.data)
+        if (reservationsRes.ok) setReservations(reservationsRes.data)
+
+        if (servicesRes.ok) {
+          const parPrestataire = new Map()
+          servicesRes.data.forEach((service) => {
+            if (service.prestataire && !parPrestataire.has(service.id_prestataire)) {
+              parPrestataire.set(service.id_prestataire, service)
+            }
+          })
+          setRecommandes([...parPrestataire.values()].slice(0, 3))
+        }
+
+        setLoading(false)
+      }
+    )
+  }, [])
+
+  async function handleLogout() {
+    await apiLogout()
+    localStorage.removeItem('token')
+    navigate('/')
+  }
+
+  const aVenir = reservations.filter((r) => ['en_attente', 'confirmee'].includes(r.statut))
+  const terminees = reservations.filter((r) => r.statut === 'terminee')
+  const moisCourant = new Date().getMonth()
+  const anneeCourante = new Date().getFullYear()
+  const depenseCeMois = terminees
+    .filter((r) => {
+      const d = new Date(r.date_reservation)
+      return d.getMonth() === moisCourant && d.getFullYear() === anneeCourante
+    })
+    .reduce((total, r) => total + Number(r.service?.tarif ?? 0), 0)
+
+  const prochaine = [...aVenir].sort((a, b) => new Date(a.date_reservation) - new Date(b.date_reservation))[0]
+  const activiteRecente = reservations.slice(0, 5)
+
+  const stats = [
+    { icon: <ClockIcon />, iconBg: 'bg-sky-50', value: String(aVenir.length), label: 'Réservations à venir' },
+    { icon: <CheckCircleIcon />, iconBg: 'bg-emerald-50', value: String(terminees.length), label: 'Missions terminées' },
+    { icon: <HeartIcon fill="#E11D48" />, iconBg: 'bg-rose-50', value: '0', label: 'Prestataires favoris' },
+    { icon: <WalletIcon />, iconBg: 'bg-amber-50', value: formatMontant(depenseCeMois), label: 'Dépensé ce mois' },
+  ]
+
   return (
     <div className="min-h-screen flex bg-babi-cream">
       <aside className="w-72 bg-white border-r border-gray-100 flex flex-col justify-between p-6 shrink-0">
@@ -145,11 +219,9 @@ function Dashboard() {
               >
                 {item.icon}
                 <span className="flex-1">{item.label}</span>
-                {item.badge && (
-                  <span className={`text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center ${
-                    item.active ? 'bg-white/20 text-white' : 'bg-babi-green text-white'
-                  }`}>
-                    {item.badge}
+                {item.label === 'Réservations' && aVenir.length > 0 && (
+                  <span className="text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center bg-babi-green text-white">
+                    {aVenir.length}
                   </span>
                 )}
               </a>
@@ -164,13 +236,13 @@ function Dashboard() {
           </a>
           <div className="flex items-center gap-3 border-t border-gray-100 pt-4">
             <span className="w-9 h-9 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-sm shrink-0">
-              AK
+              {initials(user?.prenom, user?.nom)}
             </span>
             <div className="flex-1 min-w-0">
-              <p className="font-semibold text-babi-dark text-sm truncate">Awa Koné</p>
-              <p className="text-xs text-gray-400">Client</p>
+              <p className="font-semibold text-babi-dark text-sm truncate">{user ? `${user.prenom} ${user.nom}` : '—'}</p>
+              <p className="text-xs text-gray-400 capitalize">{user?.role ?? 'Client'}</p>
             </div>
-            <button className="text-gray-400 hover:text-babi-dark transition-colors">
+            <button onClick={handleLogout} className="text-gray-400 hover:text-babi-dark transition-colors">
               <LogoutIcon />
             </button>
           </div>
@@ -186,17 +258,16 @@ function Dashboard() {
           <div className="flex items-center gap-4 shrink-0">
             <button className="relative text-gray-500 hover:text-babi-dark transition-colors">
               <BellIcon />
-              <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-rose-500 rounded-full"></span>
             </button>
             <span className="w-9 h-9 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-sm">
-              AK
+              {initials(user?.prenom, user?.nom)}
             </span>
           </div>
         </div>
 
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
           <div>
-            <h1 className="text-3xl font-extrabold text-babi-dark font-bricolage">Bonjour, Awa 👋</h1>
+            <h1 className="text-3xl font-extrabold text-babi-dark font-bricolage">Bonjour, {user?.prenom ?? '...'} 👋</h1>
             <p className="text-gray-500 mt-1">Voici un aperçu de votre activité.</p>
           </div>
           <button className="bg-babi-green text-white px-5 py-3 rounded-full font-semibold hover:-translate-y-0.5 hover:shadow-lg transition-all flex items-center gap-2 shrink-0">
@@ -210,7 +281,7 @@ function Dashboard() {
               <span className={`inline-flex p-2.5 rounded-xl mb-4 ${stat.iconBg}`}>
                 {stat.icon}
               </span>
-              <p className="text-2xl font-extrabold text-babi-dark font-bricolage">{stat.value}</p>
+              <p className="text-2xl font-extrabold text-babi-dark font-bricolage">{loading ? '…' : stat.value}</p>
               <p className="text-sm text-gray-500 mt-1">{stat.label}</p>
             </div>
           ))}
@@ -220,50 +291,69 @@ function Dashboard() {
           <div className="lg:col-span-2 bg-white rounded-2xl p-6 border border-gray-100">
             <div className="flex items-center justify-between mb-5">
               <h2 className="font-bold text-babi-dark">Prochaine réservation</h2>
-              <span className="bg-emerald-50 text-emerald-700 text-xs font-semibold px-3 py-1 rounded-full">Confirmée</span>
+              {prochaine && (
+                <span className={`text-xs font-semibold px-3 py-1 rounded-full ${statutStyles[prochaine.statut]}`}>
+                  {statutLabels[prochaine.statut]}
+                </span>
+              )}
             </div>
-            <div className="flex items-center gap-4 mb-5">
-              <span className="w-12 h-12 rounded-full bg-violet-200 text-violet-700 flex items-center justify-center font-bold shrink-0">AT</span>
-              <div>
-                <p className="font-semibold text-babi-dark">Awa Traoré</p>
-                <p className="text-sm text-gray-500">Coiffure à domicile</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-5 text-sm text-gray-500 mb-6">
-              <span className="flex items-center gap-1.5"><CalendarIcon /> 31 mai · 10:00</span>
-              <span className="flex items-center gap-1.5"><PinIcon /> Cocody</span>
-              <span className="flex items-center gap-1.5"><MoneyIcon /> 12 000 F</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <button className="flex-1 flex items-center justify-center gap-2 bg-white border border-gray-200 text-babi-dark font-semibold py-3 rounded-xl hover:border-babi-green transition-colors">
-                <MessageIcon /> Message
-              </button>
-              <button className="flex-1 flex items-center justify-center gap-2 bg-babi-green text-white font-semibold py-3 rounded-xl hover:-translate-y-0.5 hover:shadow-lg transition-all">
-                <PhoneIcon /> Appeler
-              </button>
-            </div>
+            {prochaine ? (
+              <>
+                <div className="flex items-center gap-4 mb-5">
+                  <span className={`w-12 h-12 rounded-full flex items-center justify-center font-bold shrink-0 ${avatarBg(0)}`}>
+                    {initials(prochaine.service?.prestataire?.prenom, prochaine.service?.prestataire?.nom)}
+                  </span>
+                  <div>
+                    <p className="font-semibold text-babi-dark">
+                      {prochaine.service?.prestataire?.prenom} {prochaine.service?.prestataire?.nom}
+                    </p>
+                    <p className="text-sm text-gray-500">{prochaine.service?.nom_service}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-5 text-sm text-gray-500 mb-6">
+                  <span className="flex items-center gap-1.5"><CalendarIcon /> {formatDateHeure(prochaine.date_reservation, prochaine.heure_reservation)}</span>
+                  {prochaine.service?.prestataire?.localisation && (
+                    <span className="flex items-center gap-1.5"><PinIcon /> {prochaine.service.prestataire.localisation}</span>
+                  )}
+                  <span className="flex items-center gap-1.5"><MoneyIcon /> {formatMontant(prochaine.service?.tarif)}</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <button className="flex-1 flex items-center justify-center gap-2 bg-white border border-gray-200 text-babi-dark font-semibold py-3 rounded-xl hover:border-babi-green transition-colors">
+                    <MessageIcon /> Message
+                  </button>
+                  <button className="flex-1 flex items-center justify-center gap-2 bg-babi-green text-white font-semibold py-3 rounded-xl hover:-translate-y-0.5 hover:shadow-lg transition-all">
+                    <PhoneIcon /> Appeler
+                  </button>
+                </div>
+              </>
+            ) : (
+              <p className="text-sm text-gray-500">{loading ? 'Chargement...' : 'Aucune réservation à venir.'}</p>
+            )}
           </div>
 
           <div className="bg-white rounded-2xl p-6 border border-gray-100">
             <h2 className="font-bold text-babi-dark mb-5">Recommandés pour vous</h2>
             <div className="flex flex-col gap-4">
-              {recommandes.map((pro, index) => (
-                <div key={index} className="flex items-center gap-3">
-                  <span className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0 ${pro.bg}`}>
-                    {pro.initials}
+              {recommandes.map((service, index) => (
+                <div key={service.id_service} className="flex items-center gap-3">
+                  <span className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0 ${avatarBg(index)}`}>
+                    {initials(service.prestataire?.prenom, service.prestataire?.nom)}
                   </span>
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-babi-dark text-sm truncate">{pro.nom}</p>
-                    <p className="text-xs text-gray-500 truncate">{pro.metier}</p>
+                    <p className="font-semibold text-babi-dark text-sm truncate">{service.prestataire?.prenom} {service.prestataire?.nom}</p>
+                    <p className="text-xs text-gray-500 truncate">{service.nom_service}</p>
                   </div>
                   <span className="flex items-center gap-1 text-xs font-semibold text-babi-dark shrink-0">
                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 16 16" fill="#FBBF24">
                       <path d="M8 1.33301L9.92667 5.55301L14.6667 6.22634L11.3333 9.42634L12.16 14.0997L8 11.873L3.84 14.0997L4.66667 9.42634L1.33333 6.22634L6.07333 5.55301L8 1.33301Z"/>
                     </svg>
-                    {pro.note}
+                    {service.prestataire?.note_moyenne ?? '—'}
                   </span>
                 </div>
               ))}
+              {!loading && recommandes.length === 0 && (
+                <p className="text-sm text-gray-500">Aucune recommandation pour le moment.</p>
+              )}
             </div>
           </div>
         </div>
@@ -283,27 +373,34 @@ function Dashboard() {
                 </tr>
               </thead>
               <tbody>
-                {activites.map((activite, index) => (
-                  <tr key={index} className="border-t border-gray-100">
-                    <td className="py-3 pr-4 text-gray-500">{activite.ref}</td>
+                {activiteRecente.map((reservation, index) => (
+                  <tr key={reservation.id_reservation} className="border-t border-gray-100">
+                    <td className="py-3 pr-4 text-gray-500">BK-{String(reservation.id_reservation).padStart(4, '0')}</td>
                     <td className="py-3 pr-4">
                       <div className="flex items-center gap-2">
-                        <span className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${activite.bg}`}>
-                          {activite.initials}
+                        <span className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${avatarBg(index)}`}>
+                          {initials(reservation.service?.prestataire?.prenom, reservation.service?.prestataire?.nom)}
                         </span>
-                        <span className="font-semibold text-babi-dark">{activite.nom}</span>
+                        <span className="font-semibold text-babi-dark">
+                          {reservation.service?.prestataire?.prenom} {reservation.service?.prestataire?.nom}
+                        </span>
                       </div>
                     </td>
-                    <td className="py-3 pr-4 text-gray-500">{activite.service}</td>
-                    <td className="py-3 pr-4 text-gray-500">{activite.date}</td>
+                    <td className="py-3 pr-4 text-gray-500">{reservation.service?.nom_service}</td>
+                    <td className="py-3 pr-4 text-gray-500">{formatDateHeure(reservation.date_reservation, reservation.heure_reservation)}</td>
                     <td className="py-3 pr-4">
-                      <span className={`text-xs font-semibold px-3 py-1 rounded-full ${statutStyles[activite.statut]}`}>
-                        {activite.statut}
+                      <span className={`text-xs font-semibold px-3 py-1 rounded-full ${statutStyles[reservation.statut]}`}>
+                        {statutLabels[reservation.statut]}
                       </span>
                     </td>
-                    <td className="py-3 font-semibold text-babi-dark">{activite.montant}</td>
+                    <td className="py-3 font-semibold text-babi-dark">{formatMontant(reservation.service?.tarif)}</td>
                   </tr>
                 ))}
+                {!loading && activiteRecente.length === 0 && (
+                  <tr>
+                    <td colSpan={6} className="py-6 text-center text-gray-500">Aucune réservation pour le moment.</td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
