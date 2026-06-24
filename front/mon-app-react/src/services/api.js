@@ -1,39 +1,64 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api'
+export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
-function getToken() {
-  return localStorage.getItem('token')
-}
+const getHeaders = () => ({
+  'Content-Type': 'application/json',
+  'Accept': 'application/json',
+  'Authorization': `Bearer ${localStorage.getItem('token')}`,
+})
 
-async function request(endpoint, { method = 'GET', body, ...options } = {}) {
-  const token = getToken()
+const getAuthHeaders = () => ({
+  'Accept': 'application/json',
+  'Authorization': `Bearer ${localStorage.getItem('token')}`,
+})
 
-  const response = await fetch(`${API_BASE_URL}/${endpoint}`, {
-    method,
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...options.headers,
-    },
-    body: body ? JSON.stringify(body) : undefined,
-    ...options,
+const publicHeaders = () => ({
+  'Content-Type': 'application/json',
+  'Accept': 'application/json',
+})
+
+export const apiRegister = async (data) => {
+  const res = await fetch(`${API_URL}/api/register`, {
+    method: 'POST',
+    headers: publicHeaders(),
+    body: JSON.stringify(data),
   })
-
-  const data = await response.json().catch(() => null)
-
-  if (!response.ok) {
-    throw { status: response.status, ...data }
-  }
-
-  return data
+  return { ok: res.ok, status: res.status, data: await res.json() }
 }
 
-const api = {
-  get: (endpoint, options) => request(endpoint, { ...options, method: 'GET' }),
-  post: (endpoint, body, options) => request(endpoint, { ...options, method: 'POST', body }),
-  put: (endpoint, body, options) => request(endpoint, { ...options, method: 'PUT', body }),
-  patch: (endpoint, body, options) => request(endpoint, { ...options, method: 'PATCH', body }),
-  delete: (endpoint, options) => request(endpoint, { ...options, method: 'DELETE' }),
+export const apiLogin = async (data) => {
+  const res = await fetch(`${API_URL}/api/login`, {
+    method: 'POST',
+    headers: publicHeaders(),
+    body: JSON.stringify(data),
+  })
+  return { ok: res.ok, status: res.status, data: await res.json() }
 }
 
-export default api
+export const apiLogout = async () => {
+  const res = await fetch(`${API_URL}/api/logout`, {
+    method: 'POST',
+    headers: getHeaders(),
+  })
+  return { ok: res.ok }
+}
+
+export const apiGetMe = async () => {
+  const res = await fetch(`${API_URL}/api/me`, {
+    headers: getAuthHeaders(),
+  })
+  return { ok: res.ok, data: await res.json() }
+}
+
+export const apiGetServices = async () => {
+  const res = await fetch(`${API_URL}/api/services`, {
+    headers: { Accept: 'application/json' },
+  })
+  return { ok: res.ok, data: await res.json() }
+}
+
+export const apiGetReservations = async () => {
+  const res = await fetch(`${API_URL}/api/reservations`, {
+    headers: getAuthHeaders(),
+  })
+  return { ok: res.ok, data: await res.json() }
+}

@@ -47,11 +47,6 @@ class AdminDashboardController extends Controller
                 ->latest()
                 ->limit(5)
                 ->get(),
-            'signalements_en_attente' => DB::table('signaler')
-                ->where('statut', 'en_attente')
-                ->latest()
-                ->limit(5)
-                ->get(),
         ];
 
         // Prestataires à valider
