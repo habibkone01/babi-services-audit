@@ -36,4 +36,13 @@ const api = {
   delete: (endpoint, options) => request(endpoint, { ...options, method: 'DELETE' }),
 }
 
+export const apiGetServices = async () => {
+  try {
+    const data = await api.get('services')
+    return { ok: true, data }
+  } catch (err) {
+    return { ok: false, status: err.status, data: err }
+  }
+}
+
 export default api
