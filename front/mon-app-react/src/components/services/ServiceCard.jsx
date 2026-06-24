@@ -1,131 +1,133 @@
-import { Link } from "react-router-dom";
-import { Star, MapPin, BadgeCheck } from "lucide-react";
+import { Link } from "react-router-dom"
 
-// Couleurs d'avatar tournantes (déterministes selon l'id) pour remplacer une vraie photo
+const TagIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 20 20" fill="none">
+    <path d="M9.41667 2.5H4.16667C3.24619 2.5 2.5 3.24619 2.5 4.16667V9.41667C2.5 9.8587 2.67559 10.2826 2.98816 10.5952L11.0048 18.6118C11.6566 19.2636 12.7184 19.2636 13.3702 18.6118L18.6118 13.3702C19.2636 12.7184 19.2636 11.6566 18.6118 11.0048L10.5952 2.98816C10.2826 2.67559 9.8587 2.5 9.41667 2.5Z" stroke="#047857" strokeWidth="1.66667" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M6.66667 6.66667H6.675" stroke="#047857" strokeWidth="1.66667" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+)
+
+const VerifiedIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="none">
+    <path d="M7.5 10L9.16667 11.6667L12.5 8.33333M18.3333 10C18.3333 14.6024 14.6024 18.3333 10 18.3333C5.39763 18.3333 1.66667 14.6024 1.66667 10C1.66667 5.39763 5.39763 1.66667 10 1.66667C14.6024 1.66667 18.3333 5.39763 18.3333 10Z" stroke="#FF7A45" strokeWidth="1.66667" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+)
+
+const StarRatingIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="#FBBF24">
+    <path d="M10 1.66602L12.5729 6.87928L18.3333 7.7202L14.1667 11.7793L15.1459 17.5152L10 14.8127L4.85413 17.5152L5.83333 11.7793L1.66667 7.7202L7.42706 6.87928L10 1.66602Z"/>
+  </svg>
+)
+
+const LocationIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 20 20" fill="none">
+    <path d="M17.5 8.33333C17.5 13.3333 10 18.3333 10 18.3333C10 18.3333 2.5 13.3333 2.5 8.33333C2.5 4.65143 5.85786 1.66667 10 1.66667C14.1421 1.66667 17.5 4.65143 17.5 8.33333Z" stroke="#9CA3AF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M10 10.8333C11.3807 10.8333 12.5 9.71404 12.5 8.33333C12.5 6.95262 11.3807 5.83333 10 5.83333C8.61929 5.83333 7.5 6.95262 7.5 8.33333C7.5 9.71404 8.61929 10.8333 10 10.8333Z" stroke="#9CA3AF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+)
+
 const AVATAR_COLORS = [
-  { bg: "#E6E6FA", text: "#6C63B5" },
-  { bg: "#FCE4E4", text: "#C75C5C" },
-  { bg: "#E0F2EC", text: "#0E9F6E" },
-  { bg: "#FFF3DA", text: "#B98A1E" },
-];
+  'bg-purple-100 text-purple-700',
+  'bg-amber-100 text-amber-700',
+  'bg-sky-100 text-sky-700',
+  'bg-emerald-100 text-emerald-700',
+  'bg-rose-100 text-rose-700',
+]
 
-function getAvatarColor(id) {
-  return AVATAR_COLORS[id % AVATAR_COLORS.length];
+function avatarColor(id) {
+  return AVATAR_COLORS[(id ?? 0) % AVATAR_COLORS.length]
 }
 
-function getInitials(name = "") {
-  return name
-    .split(" ")
-    .map((part) => part[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
+function initials(prenom, nom) {
+  return `${(prenom?.[0] ?? '').toUpperCase()}${(nom?.[0] ?? '').toUpperCase()}`
+}
+
+function formatMontant(value) {
+  return value ? `${Number(value).toLocaleString('fr-FR')} F` : 'Sur devis'
 }
 
 export default function ServiceCard({ service }) {
-  const {
-    id_service,
-    nom_service,
-    description,
-    tarif,
-    disponibilite,
-    prestataire,
-    categorie,
-  } = service;
+  const { id_service, nom_service, description, tarif, disponibilite, prestataire, categorie } = service
 
-  const avatar = getAvatarColor(id_service ?? 0);
-  const tags = (description || "")
-    .split(",")
+  const tags = (description || '')
+    .split(',')
     .map((t) => t.trim())
     .filter(Boolean)
-    .slice(0, 3);
+    .slice(0, 3)
 
   return (
-    <div className="bg-white rounded-2xl border border-[#E3EFE9] overflow-hidden flex flex-col hover:shadow-md transition-shadow">
-      <div className="flex items-center justify-between px-4 pt-4">
-        <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#3D5A50]">
-          {categorie?.nom_categorie || categorie?.nom || "Service"}
-        </span>
-        <span
-          className={`text-xs font-medium px-2.5 py-1 rounded-full flex items-center gap-1 ${
-            disponibilite
-              ? "bg-[#E6F4EC] text-[#0E9F6E]"
-              : "bg-[#F3F0EC] text-[#9A9A9A]"
-          }`}
-        >
-          <span
-            className={`w-1.5 h-1.5 rounded-full ${
-              disponibilite ? "bg-[#0E9F6E]" : "bg-[#9A9A9A]"
-            }`}
-          />
-          {disponibilite ? "Dispo" : "Occupé"}
-        </span>
+    <div className="bg-white rounded-3xl overflow-hidden border border-gray-100 hover:-translate-y-1 hover:shadow-xl transition-all">
+      <div className="bg-emerald-50 p-4">
+        <div className="flex items-center justify-between mb-4">
+          <span className="inline-flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-full text-xs font-semibold text-babi-dark">
+            <TagIcon />
+            {categorie?.nom_categorie ?? 'Service'}
+          </span>
+          {disponibilite ? (
+            <span className="inline-flex items-center gap-1.5 bg-green-100 text-green-700 px-3 py-1.5 rounded-full text-xs font-semibold">
+              <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+              Dispo
+            </span>
+          ) : (
+            <span className="bg-white text-gray-400 px-3 py-1.5 rounded-full text-xs font-semibold border border-gray-200">
+              Occupé
+            </span>
+          )}
+        </div>
+        <div className="h-32 flex items-center justify-center border border-dashed border-emerald-200 rounded-xl text-emerald-300 text-sm font-mono">
+          photo prestation
+        </div>
       </div>
 
-      <div className="mx-4 mt-3 h-28 rounded-xl bg-[#F0F7F4] flex items-center justify-center text-xs text-[#9FC2B4] tracking-widest">
-        photo prestation
-      </div>
-
-      <div className="p-4 flex flex-col flex-1">
-        <div className="flex items-start gap-3">
-          <div
-            className="w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm flex-shrink-0"
-            style={{ backgroundColor: avatar.bg, color: avatar.text }}
-          >
-            {getInitials(prestataire?.nom_prestataire || prestataire?.nom)}
+      <div className="p-5">
+        <div className="flex items-center gap-3 mb-3">
+          <div className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-sm shrink-0 ${avatarColor(prestataire?.id_prestataire)}`}>
+            {initials(prestataire?.prenom, prestataire?.nom)}
           </div>
           <div className="min-w-0">
-            <p className="font-semibold text-[#0B2B26] flex items-center gap-1 truncate">
-              {prestataire?.nom_prestataire || prestataire?.nom || "Prestataire"}
-              <BadgeCheck className="w-4 h-4 text-[#0E9F6E] flex-shrink-0" />
-            </p>
-            <p className="text-sm text-[#7A9C90] truncate">{nom_service}</p>
+            <div className="flex items-center gap-1.5">
+              <h3 className="font-bold text-babi-dark text-sm truncate">{prestataire?.prenom} {prestataire?.nom}</h3>
+              <VerifiedIcon />
+            </div>
+            <p className="text-gray-500 text-sm truncate">{nom_service}</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3 mt-2 text-sm text-[#3D5A50]">
-          <span className="flex items-center gap-1 font-medium text-[#0B2B26]">
-            <Star className="w-3.5 h-3.5 fill-[#F5A623] text-[#F5A623]" />
-            {prestataire?.note_moyenne ?? "—"}
-            {prestataire?.nb_avis != null && (
-              <span className="text-[#9FB8AE] font-normal">({prestataire.nb_avis})</span>
-            )}
-          </span>
-          {prestataire?.quartier && (
-            <span className="flex items-center gap-1 text-[#7A9C90]">
-              <MapPin className="w-3.5 h-3.5" />
-              {prestataire.quartier}
-            </span>
+        <div className="flex items-center gap-3 mb-3 text-sm">
+          <div className="flex items-center gap-1">
+            <StarRatingIcon />
+            <span className="font-bold text-babi-dark">{prestataire?.note_moyenne ?? '—'}</span>
+          </div>
+          {prestataire?.localisation && (
+            <div className="flex items-center gap-1 text-gray-500">
+              <LocationIcon />
+              <span>{prestataire.localisation}</span>
+            </div>
           )}
         </div>
 
         {tags.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 mt-3">
+          <div className="flex flex-wrap gap-2 mb-4">
             {tags.map((tag) => (
-              <span
-                key={tag}
-                className="bg-[#F0F7F4] text-[#3D5A50] text-xs px-2.5 py-1 rounded-full"
-              >
+              <span key={tag} className="bg-gray-100 text-gray-600 text-xs font-medium px-3 py-1.5 rounded-full">
                 {tag}
               </span>
             ))}
           </div>
         )}
 
-        <div className="flex items-center justify-between mt-4 pt-3 border-t border-[#EEF3F0]">
-          <span className="text-sm font-semibold text-[#0B2B26]">
-            {tarif ? `${Number(tarif).toLocaleString("fr-FR")} F` : "Sur devis"}
-          </span>
+        <div className="flex items-center justify-between gap-2">
+          <p className="font-bold text-babi-green text-sm leading-tight">{formatMontant(tarif)}</p>
           <div className="flex items-center gap-2">
             <Link
               to={`/services/${id_service}`}
-              className="text-sm font-medium text-[#0B2B26] hover:text-[#0E9F6E] transition-colors px-3 py-2"
+              className="text-sm font-semibold text-babi-dark hover:text-babi-green transition-colors px-3 py-2"
             >
               Voir le profil
             </Link>
             <Link
               to={`/services/${id_service}/reserver`}
-              className="bg-[#0E9F6E] text-white text-sm font-medium px-4 py-2 rounded-full hover:bg-[#0C8A5F] transition-colors"
+              className="bg-babi-green text-white text-sm font-semibold px-4 py-2 rounded-full hover:-translate-y-0.5 hover:shadow-lg transition-all whitespace-nowrap"
             >
               Réserver
             </Link>
@@ -133,5 +135,5 @@ export default function ServiceCard({ service }) {
         </div>
       </div>
     </div>
-  );
+  )
 }
