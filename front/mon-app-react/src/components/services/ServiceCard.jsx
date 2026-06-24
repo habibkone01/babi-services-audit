@@ -118,12 +118,20 @@ export default function ServiceCard({ service }) {
 
         <div className="flex items-center justify-between gap-2">
           <p className="font-bold text-babi-green text-sm leading-tight">{formatMontant(tarif)}</p>
-          <Link
-            to={`/services/${id_service}`}
-            className="bg-emerald-100 hover:bg-gradient-to-r hover:from-babi-green hover:to-babi-green-light hover:text-white text-babi-green px-4 py-2 rounded-full font-semibold transition-all text-sm whitespace-nowrap"
-          >
-            Voir le profil
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link
+              to={`/services/${id_service}`}
+              className="text-sm font-semibold text-babi-dark hover:text-babi-green transition-colors px-3 py-2"
+            >
+              Voir le profil
+            </Link>
+            <Link
+              to={`/services/${id_service}/reserver`}
+              className="bg-babi-green text-white text-sm font-semibold px-4 py-2 rounded-full hover:-translate-y-0.5 hover:shadow-lg transition-all whitespace-nowrap"
+            >
+              Réserver
+            </Link>
+          </div>
         </div>
       </div>
     </div>
