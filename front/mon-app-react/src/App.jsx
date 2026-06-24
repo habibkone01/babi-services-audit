@@ -5,6 +5,8 @@ import ServicesPage from './pages/ServicesPage'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import ProtectedRoute from './components/ProtectedRoute'
+import ReservationFormPage from './pages/ReservationFormPage'
+import MesReservationsPage from './pages/MesReservationsPage'
 
 function App() {
   return (
@@ -21,6 +23,8 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route path="/services/:id/reserver" element={<ReservationFormPage />} />
+      <Route path="/reservations" element={<MesReservationsPage />} />
     </Routes>
   )
 }
