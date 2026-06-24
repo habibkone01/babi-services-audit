@@ -14,7 +14,7 @@ class PrestaireController extends Controller
      */
     public function index()
     {
-        return response()->json(Prestataire::with('services')->get());
+        return response()->json(Prestataire::with(['services', 'categorie'])->get());
     }
 
     /**
@@ -22,7 +22,10 @@ class PrestaireController extends Controller
      */
     public function store(StorePrestaireRequest $request)
     {
-        $prestataire = Prestataire::create($request->validated());
+        $prestataire = Prestataire::create([
+            ...$request->validated(),
+            'statut' => 'valide',
+        ]);
         return response()->json($prestataire, 201);
     }
 

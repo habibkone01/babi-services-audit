@@ -20,11 +20,18 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('avis', AvisController::class);
 });
 
-Route::apiResource('prestataires', PrestaireController::class);
-Route::apiResource('categories', CategorieController::class);
-Route::apiResource('services', ServiceController::class);
+Route::apiResource('prestataires', PrestaireController::class)->only(['index', 'show']);
+Route::apiResource('categories', CategorieController::class)->only(['index', 'show']);
+Route::apiResource('services', ServiceController::class)->only(['index', 'show']);
 
+Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+    Route::apiResource('prestataires', PrestaireController::class)->only(['store', 'update', 'destroy']);
+    Route::apiResource('categories', CategorieController::class)->only(['store', 'update', 'destroy']);
+    Route::apiResource('services', ServiceController::class)->only(['store', 'update', 'destroy']);
 
-Route::get('admin/dashboard', [AdminDashboardController::class, 'index']);
-Route::patch('admin/prestataires/{id}/valider', [AdminDashboardController::class, 'validerPrestataire']);
-Route::patch('admin/prestataires/{id}/rejeter', [AdminDashboardController::class, 'rejeterPrestataire']);
+    Route::prefix('admin')->group(function () {
+        Route::get('dashboard', [AdminDashboardController::class, 'index']);
+        Route::patch('prestataires/{id}/valider', [AdminDashboardController::class, 'validerPrestataire']);
+        Route::patch('prestataires/{id}/rejeter', [AdminDashboardController::class, 'rejeterPrestataire']);
+    });
+});
