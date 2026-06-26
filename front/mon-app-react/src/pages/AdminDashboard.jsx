@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import AdminLayout from '../components/AdminLayout'
-import { apiGetAdminDashboard, apiValiderPrestataire, apiRejeterPrestataire } from '../services/api'
+import { apiGetAdminDashboard } from '../services/api'
 
 const BriefcaseIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none">
@@ -51,18 +52,6 @@ const StarIcon = ({ color = '#FBBF24' }) => (
   </svg>
 )
 
-const CheckIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="none">
-    <path d="M16.6667 5L7.5 14.1667L3.33333 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-)
-
-const CloseIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="none">
-    <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-)
-
 const moisLabels = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D']
 const moisNoms = [
   'janvier', 'février', 'mars', 'avril', 'mai', 'juin',
@@ -98,20 +87,6 @@ function AdminDashboard() {
       setLoading(false)
     })
   }, [])
-
-  async function handleValider(id) {
-    const res = await apiValiderPrestataire(id)
-    if (res.ok) {
-      setData((prev) => ({ ...prev, a_valider: prev.a_valider.filter((p) => p.id_prestataire !== id) }))
-    }
-  }
-
-  async function handleRejeter(id) {
-    const res = await apiRejeterPrestataire(id)
-    if (res.ok) {
-      setData((prev) => ({ ...prev, a_valider: prev.a_valider.filter((p) => p.id_prestataire !== id) }))
-    }
-  }
 
   const stats = data?.stats
   const aValider = data?.a_valider ?? []
@@ -214,68 +189,35 @@ function AdminDashboard() {
       </div>
 
       <div className="bg-white rounded-2xl p-6 border border-gray-100">
-        <div className="flex items-center gap-2 mb-5">
-          <h2 className="font-bold text-babi-dark">À valider</h2>
-          {aValider.length > 0 && (
-            <span className="bg-babi-green text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-              {aValider.length}
-            </span>
-          )}
+        <div className="flex items-center justify-between mb-5">
+          <div className="flex items-center gap-2">
+            <h2 className="font-bold text-babi-dark">À valider</h2>
+            {aValider.length > 0 && (
+              <span className="bg-babi-green text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                {aValider.length}
+              </span>
+            )}
+          </div>
+          <Link to="/admin/validations" className="text-sm font-semibold text-babi-green hover:underline">
+            Voir tout →
+          </Link>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-left text-xs text-gray-400 uppercase tracking-wider">
-                <th className="font-semibold pb-3 pr-4">Prestataire</th>
-                <th className="font-semibold pb-3 pr-4">Métier</th>
-                <th className="font-semibold pb-3 pr-4">Quartier</th>
-                <th className="font-semibold pb-3 pr-4">Contact</th>
-                <th className="font-semibold pb-3 pr-4">Demande</th>
-                <th className="font-semibold pb-3">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {aValider.map((prestataire) => (
-                <tr key={prestataire.id_prestataire} className="border-t border-gray-100">
-                  <td className="py-3 pr-4">
-                    <div className="flex items-center gap-2">
-                      <span className="w-7 h-7 rounded-full bg-violet-200 text-violet-700 flex items-center justify-center text-xs font-bold shrink-0">
-                        {initials(prestataire.prenom, prestataire.nom)}
-                      </span>
-                      <span className="font-semibold text-babi-dark">{prestataire.prenom} {prestataire.nom}</span>
-                    </div>
-                  </td>
-                  <td className="py-3 pr-4 text-gray-500">{prestataire.categorie?.nom_categorie ?? '—'}</td>
-                  <td className="py-3 pr-4 text-gray-500">{prestataire.localisation ?? '—'}</td>
-                  <td className="py-3 pr-4 text-gray-500">{prestataire.telephone ?? prestataire.email}</td>
-                  <td className="py-3 pr-4 text-gray-500">{relativeTime(prestataire.created_at)}</td>
-                  <td className="py-3">
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => handleValider(prestataire.id_prestataire)}
-                        className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center hover:bg-emerald-100 transition-colors"
-                        title="Valider"
-                      >
-                        <CheckIcon />
-                      </button>
-                      <button
-                        onClick={() => handleRejeter(prestataire.id_prestataire)}
-                        className="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center hover:bg-rose-100 transition-colors"
-                        title="Rejeter"
-                      >
-                        <CloseIcon />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              {!loading && aValider.length === 0 && (
-                <tr>
-                  <td colSpan={6} className="py-6 text-center text-gray-500">Aucun prestataire en attente de validation.</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+        <div className="flex flex-col divide-y divide-gray-100">
+          {aValider.slice(0, 3).map((prestataire) => (
+            <div key={prestataire.id_prestataire} className="flex items-center gap-3 py-3">
+              <span className="w-8 h-8 rounded-full bg-violet-200 text-violet-700 flex items-center justify-center text-xs font-bold shrink-0">
+                {initials(prestataire.prenom, prestataire.nom)}
+              </span>
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold text-babi-dark text-sm truncate">{prestataire.prenom} {prestataire.nom}</p>
+                <p className="text-xs text-gray-500 truncate">{prestataire.categorie?.nom_categorie ?? '—'} · {prestataire.localisation ?? '—'}</p>
+              </div>
+              <span className="text-xs text-gray-400 shrink-0">{relativeTime(prestataire.created_at)}</span>
+            </div>
+          ))}
+          {!loading && aValider.length === 0 && (
+            <p className="text-sm text-gray-500 py-6 text-center">Aucun prestataire en attente de validation.</p>
+          )}
         </div>
       </div>
     </AdminLayout>
