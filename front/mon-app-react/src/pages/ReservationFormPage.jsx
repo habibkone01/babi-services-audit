@@ -42,7 +42,6 @@ export default function ReservationFormPage() {
     const res = await apiCreateReservation({
       date_reservation: date,
       heure_reservation: heure,
-      statut: "en_attente",
       id_service: Number(id),
     });
     setSubmitting(false);
@@ -92,12 +91,12 @@ export default function ReservationFormPage() {
               <CheckCircle2 className="w-7 h-7 text-[#0E9F6E]" />
             </div>
             <h1 className="text-2xl font-bold text-[#0B2B26] mb-2">
-              Réservation envoyée
+              Réservation confirmée
             </h1>
             <p className="text-sm text-[#3D5A50] mb-6">
-              Ta demande pour <strong>{nom_service}</strong> le{" "}
-              {new Date(date).toLocaleDateString("fr-FR")} à {heure} a bien été
-              transmise. Le prestataire va la confirmer rapidement.
+              Ta réservation pour <strong>{nom_service}</strong> le{" "}
+              {new Date(date).toLocaleDateString("fr-FR")} à {heure} est confirmée.
+              Le prestataire te contactera pour convenir du lieu du rendez-vous.
             </p>
             <div className="flex items-center justify-center gap-3">
               <Link

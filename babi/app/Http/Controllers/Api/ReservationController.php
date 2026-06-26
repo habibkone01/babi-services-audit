@@ -27,9 +27,12 @@ class ReservationController extends Controller
      */
     public function store(StoreReservationRequest $request)
     {
+        // Pas de prestataire connecté pour confirmer la demande : le rendez-vous
+        // se fait en personne (agence), donc la réservation est confirmée directement.
         $reservation = Reservation::create([
             ...$request->validated(),
             'id_utilisateur' => auth()->id(),
+            'statut' => 'confirmee',
         ]);
         return response()->json($reservation, 201);
     }
