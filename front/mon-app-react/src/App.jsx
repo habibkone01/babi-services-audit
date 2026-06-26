@@ -8,6 +8,7 @@ import AdminDashboard from './pages/AdminDashboard'
 import PrestatairesAdmin from './pages/PrestatairesAdmin'
 import CategoriesAdmin from './pages/CategoriesAdmin'
 import ServicesAdmin from './pages/ServicesAdmin'
+import ValidationsAdmin from './pages/ValidationsAdmin'
 import ProtectedRoute from './components/ProtectedRoute'
 import ReservationFormPage from './pages/ReservationFormPage'
 import MesReservationsPage from './pages/MesReservationsPage'
@@ -34,6 +35,14 @@ function App() {
         element={
           <ProtectedRoute>
             <AdminDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/validations"
+        element={
+          <ProtectedRoute>
+            <ValidationsAdmin />
           </ProtectedRoute>
         }
       />

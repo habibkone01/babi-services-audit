@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Mail\AnnoncePublieeMail;
 use App\Models\Service;
 use App\Http\Requests\Service\StoreServiceRequest;
 use App\Http\Requests\Service\UpdateServiceRequest;
+use Illuminate\Support\Facades\Mail;
 
 class ServiceController extends Controller
 {
@@ -23,6 +25,12 @@ class ServiceController extends Controller
     public function store(StoreServiceRequest $request)
     {
         $service = Service::create($request->validated());
+        $service->load(['prestataire', 'categorie']);
+
+        if ($service->prestataire?->email) {
+            Mail::to($service->prestataire->email)->send(new AnnoncePublieeMail($service));
+        }
+
         return response()->json($service, 201);
     }
 
