@@ -83,7 +83,7 @@ const ListIcon = () => (
 
 const navItems = [
   { icon: <GridIcon />, label: 'Tableau de bord', to: '/admin' },
-  { icon: <ShieldCheckIcon />, label: 'Validations', to: '/admin' },
+  { icon: <ShieldCheckIcon />, label: 'Validations', to: '/admin/validations' },
   { icon: <BriefcaseIcon />, label: 'Prestataires', to: '/admin/prestataires' },
   { icon: <TagIcon />, label: 'Catégories', to: '/admin/categories' },
   { icon: <ListIcon />, label: 'Services', to: '/admin/services' },
