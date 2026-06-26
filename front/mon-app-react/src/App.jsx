@@ -61,8 +61,22 @@ function App() {
           </ProtectedRoute>
         }
       />
-      <Route path="/services/:id/reserver" element={<ReservationFormPage />} />
-      <Route path="/reservations" element={<MesReservationsPage />} />
+      <Route
+        path="/services/:id/reserver"
+        element={
+          <ProtectedRoute>
+            <ReservationFormPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/reservations"
+        element={
+          <ProtectedRoute>
+            <MesReservationsPage />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   )
 }

@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import ReservationCard from "../components/reservations/ReservationCard";
-import { fetchReservations, updateReservation } from "../api/reservations";
+import { apiGetReservations, apiUpdateReservation } from "../services/api";
 
 const FILTERS = [
   { label: "Toutes", value: "toutes" },
@@ -22,12 +22,11 @@ export default function MesReservationsPage() {
 
   useEffect(() => {
     let active = true;
-    fetchReservations()
-      .then((data) => {
-        if (active) setReservations(data);
-      })
-      .catch((err) => {
-        if (active) setError(err);
+    apiGetReservations()
+      .then((res) => {
+        if (!active) return;
+        if (res.ok) setReservations(res.data);
+        else setError(res.data);
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -46,14 +45,14 @@ export default function MesReservationsPage() {
     const confirmed = window.confirm("Annuler cette réservation ?");
     if (!confirmed) return;
 
-    try {
-      const updated = await updateReservation(id, { statut: "annulee" });
-      setReservations((prev) =>
-        prev.map((r) => (r.id_reservation === id ? updated : r))
-      );
-    } catch {
+    const res = await apiUpdateReservation(id, { statut: "annulee" });
+    if (!res.ok) {
       alert("Impossible d'annuler la réservation pour le moment.");
+      return;
     }
+    setReservations((prev) =>
+      prev.map((r) => (r.id_reservation === id ? res.data : r))
+    );
   }
 
   return (

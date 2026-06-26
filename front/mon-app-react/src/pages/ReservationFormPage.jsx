@@ -3,8 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, Calendar, Clock, Star, MapPin, CheckCircle2 } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { fetchService } from "../api/services";
-import { createReservation } from "../api/reservations";
+import { apiGetService, apiCreateReservation } from "../services/api";
 
 export default function ReservationFormPage() {
   const { id } = useParams();
@@ -21,12 +20,11 @@ export default function ReservationFormPage() {
 
   useEffect(() => {
     let active = true;
-    fetchService(id)
-      .then((data) => {
-        if (active) setService(data);
-      })
-      .catch((err) => {
-        if (active) setError(err);
+    apiGetService(id)
+      .then((res) => {
+        if (!active) return;
+        if (res.ok) setService(res.data);
+        else setError(res.data);
       })
       .finally(() => {
         if (active) setLoadingService(false);
@@ -41,22 +39,19 @@ export default function ReservationFormPage() {
     setSubmitError(null);
     setSubmitting(true);
 
-    try {
-      // ⚠️ id_utilisateur en dur ici : à remplacer par l'utilisateur connecté
-      // (ex: récupéré depuis ton contexte d'authentification)
-      await createReservation({
-        date_reservation: date,
-        heure_reservation: heure,
-        statut: "en_attente",
-        id_service: Number(id),
-        id_utilisateur: 1,
-      });
-      setSuccess(true);
-    } catch (err) {
-      setSubmitError(err);
-    } finally {
-      setSubmitting(false);
+    const res = await apiCreateReservation({
+      date_reservation: date,
+      heure_reservation: heure,
+      statut: "en_attente",
+      id_service: Number(id),
+    });
+    setSubmitting(false);
+
+    if (!res.ok) {
+      setSubmitError(res.data);
+      return;
     }
+    setSuccess(true);
   }
 
   if (loadingService) {

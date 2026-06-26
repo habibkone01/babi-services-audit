@@ -1,4 +1,4 @@
-export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+ export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 const getHeaders = () => ({
   'Content-Type': 'application/json',
@@ -61,6 +61,31 @@ export const apiGetReservations = async () => {
     headers: getAuthHeaders(),
   })
   return { ok: res.ok, data: await res.json() }
+}
+
+export const apiGetService = async (id) => {
+  const res = await fetch(`${API_URL}/api/services/${id}`, {
+    headers: { Accept: 'application/json' },
+  })
+  return { ok: res.ok, data: await res.json() }
+}
+
+export const apiCreateReservation = async (data) => {
+  const res = await fetch(`${API_URL}/api/reservations`, {
+    method: 'POST',
+    headers: getHeaders(),
+    body: JSON.stringify(data),
+  })
+  return { ok: res.ok, status: res.status, data: await res.json() }
+}
+
+export const apiUpdateReservation = async (id, data) => {
+  const res = await fetch(`${API_URL}/api/reservations/${id}`, {
+    method: 'PUT',
+    headers: getHeaders(),
+    body: JSON.stringify(data),
+  })
+  return { ok: res.ok, status: res.status, data: await res.json() }
 }
 
 export const apiGetAdminDashboard = async () => {
