@@ -11,6 +11,7 @@ import ServicesAdmin from './pages/ServicesAdmin'
 import ProtectedRoute from './components/ProtectedRoute'
 import ReservationFormPage from './pages/ReservationFormPage'
 import MesReservationsPage from './pages/MesReservationsPage'
+import DevenirPrestataire from './pages/DevenirPrestataire'
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
       <Route path="/inscription" element={<SignUp />} />
       <Route path="/services" element={<ServicesPage />} />
       <Route path="/connexion" element={<Login />} />
+      <Route path="/devenir-prestataire" element={<DevenirPrestataire />} />
       <Route
         path="/dashboard"
         element={
