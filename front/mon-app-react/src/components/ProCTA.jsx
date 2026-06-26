@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 const ArrowRightIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="none">
     <path d="M4.16667 10H15.8333M15.8333 10L10.8333 5M15.8333 10L10.8333 15" stroke="currentColor" strokeWidth="1.66667" strokeLinecap="round" strokeLinejoin="round"/>
@@ -27,10 +29,10 @@ function ProCTA() {
               Inscrivez-vous gratuitement, recevez des demandes près de chez vous et soyez payé sans tracas.
             </p>
             <div className="flex flex-wrap items-center gap-3">
-              <button className="inline-flex items-center gap-2 bg-babi-dark text-white px-6 py-3.5 rounded-full font-bold hover:-translate-y-1 hover:shadow-xl transition-all">
+              <Link to="/devenir-prestataire" className="inline-flex items-center gap-2 bg-babi-dark text-white px-6 py-3.5 rounded-full font-bold hover:-translate-y-1 hover:shadow-xl transition-all">
                 Devenir prestataire
                 <ArrowRightIcon />
-              </button>
+              </Link>
               <button className="bg-transparent border border-white/40 text-white px-6 py-3.5 rounded-full font-bold hover:bg-white/10 transition-all">
                 En savoir plus
               </button>

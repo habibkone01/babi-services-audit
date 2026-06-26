@@ -118,6 +118,15 @@ export const apiUpdatePrestataire = async (id, data) => {
   return { ok: res.ok, status: res.status, data: await res.json() }
 }
 
+export const apiCandidaterPrestataire = async (data) => {
+  const res = await fetch(`${API_URL}/api/prestataires/candidature`, {
+    method: 'POST',
+    headers: publicHeaders(),
+    body: JSON.stringify(data),
+  })
+  return { ok: res.ok, status: res.status, data: await res.json() }
+}
+
 export const apiDeletePrestataire = async (id) => {
   const res = await fetch(`${API_URL}/api/prestataires/${id}`, {
     method: 'DELETE',
