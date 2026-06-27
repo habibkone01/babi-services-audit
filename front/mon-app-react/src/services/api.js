@@ -1,4 +1,4 @@
- export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 const getHeaders = () => ({
   'Content-Type': 'application/json',
@@ -210,4 +210,52 @@ export const apiDeleteService = async (id) => {
     headers: getHeaders(),
   })
   return { ok: res.ok }
+}
+
+export const apiGetAdminUtilisateurs = async () => {
+  const res = await fetch(`${API_URL}/api/admin/utilisateurs`, {
+    headers: getAuthHeaders(),
+  })
+  return { ok: res.ok, data: await res.json() }
+}
+
+export const apiDeleteUtilisateur = async (id) => {
+  const res = await fetch(`${API_URL}/api/admin/utilisateurs/${id}`, {
+    method: 'DELETE',
+    headers: getHeaders(),
+  })
+  return { ok: res.ok, data: res.status !== 204 ? await res.json() : null }
+}
+
+export const apiDeleteAdminPrestataire = async (id) => {
+  const res = await fetch(`${API_URL}/api/admin/utilisateurs/prestataires/${id}`, {
+    method: 'DELETE',
+    headers: getHeaders(),
+  })
+  return { ok: res.ok, data: res.status !== 204 ? await res.json() : null }
+}
+
+export const apiGetAdminMissions = async () => {
+  const res = await fetch(`${API_URL}/api/admin/missions`, {
+    headers: getAuthHeaders(),
+  })
+  return { ok: res.ok, data: await res.json() }
+}
+
+export const apiUpdateProfil = async (data) => {
+  const res = await fetch(`${API_URL}/api/profil`, {
+    method: 'PUT',
+    headers: getHeaders(),
+    body: JSON.stringify(data),
+  })
+  return { ok: res.ok, data: await res.json() }
+}
+
+export const apiChangePassword = async (data) => {
+  const res = await fetch(`${API_URL}/api/profil/password`, {
+    method: 'PUT',
+    headers: getHeaders(),
+    body: JSON.stringify(data),
+  })
+  return { ok: res.ok, data: await res.json() }
 }

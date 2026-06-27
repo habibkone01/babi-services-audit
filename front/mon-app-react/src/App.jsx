@@ -9,6 +9,9 @@ import PrestatairesAdmin from './pages/PrestatairesAdmin'
 import CategoriesAdmin from './pages/CategoriesAdmin'
 import ServicesAdmin from './pages/ServicesAdmin'
 import ValidationsAdmin from './pages/ValidationsAdmin'
+import UtilisateursAdmin from './pages/UtilisateursAdmin'
+import MissionsAdmin from './pages/MissionsAdmin'
+import ReglagesAdmin from './pages/ReglagesAdmin'
 import ProtectedRoute from './components/ProtectedRoute'
 import ReservationFormPage from './pages/ReservationFormPage'
 import MesReservationsPage from './pages/MesReservationsPage'
@@ -67,6 +70,30 @@ function App() {
         element={
           <ProtectedRoute>
             <ServicesAdmin />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/utilisateurs"
+        element={
+          <ProtectedRoute>
+            <UtilisateursAdmin />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/missions"
+        element={
+          <ProtectedRoute>
+            <MissionsAdmin />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/reglages"
+        element={
+          <ProtectedRoute>
+            <ReglagesAdmin />
           </ProtectedRoute>
         }
       />
