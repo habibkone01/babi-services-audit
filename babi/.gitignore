@@ -25,3 +25,10 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.webp
+# Docker compose local
+docker-compose.override.yml
