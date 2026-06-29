@@ -15,7 +15,7 @@ class ReservationController extends Controller
     public function index()
     {
         return response()->json(
-            Reservation::with(['utilisateur', 'service.prestataire'])
+            Reservation::with(['utilisateur', 'service.prestataire', 'avis'])
                 ->where('id_utilisateur', auth()->id())
                 ->orderByDesc('date_reservation')
                 ->get()
@@ -42,7 +42,7 @@ class ReservationController extends Controller
      */
     public function show(string $id)
     {
-        $reservation = Reservation::with(['utilisateur', 'service.prestataire'])->findOrFail($id);
+        $reservation = Reservation::with(['utilisateur', 'service.prestataire', 'avis'])->findOrFail($id);
         abort_if($reservation->id_utilisateur !== auth()->id(), 403);
         return response()->json($reservation);
     }
