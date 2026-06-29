@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import ReservationCard from "../components/reservations/ReservationCard";
-import { apiGetReservations, apiUpdateReservation } from "../services/api";
+import { apiGetReservations, apiUpdateReservation, apiCreateAvis } from "../services/api";
 
 const FILTERS = [
   { label: "Toutes", value: "toutes" },
@@ -53,6 +53,30 @@ export default function MesReservationsPage() {
     setReservations((prev) =>
       prev.map((r) => (r.id_reservation === id ? res.data : r))
     );
+  }
+
+  async function handleMarkTerminee(id) {
+    const confirmed = window.confirm("Confirmer que cette prestation est terminée ?");
+    if (!confirmed) return;
+
+    const res = await apiUpdateReservation(id, { statut: "terminee" });
+    if (!res.ok) {
+      alert("Impossible de mettre à jour la réservation pour le moment.");
+      return;
+    }
+    setReservations((prev) =>
+      prev.map((r) => (r.id_reservation === id ? res.data : r))
+    );
+  }
+
+  async function handleRate(id, payload) {
+    const res = await apiCreateAvis({ ...payload, id_reservation: id });
+    if (!res.ok) return false;
+
+    setReservations((prev) =>
+      prev.map((r) => (r.id_reservation === id ? { ...r, avis: res.data } : r))
+    );
+    return true;
   }
 
   return (
@@ -130,6 +154,8 @@ export default function MesReservationsPage() {
                   key={reservation.id_reservation}
                   reservation={reservation}
                   onCancel={handleCancel}
+                  onMarkTerminee={handleMarkTerminee}
+                  onRate={handleRate}
                 />
               ))}
             </div>
