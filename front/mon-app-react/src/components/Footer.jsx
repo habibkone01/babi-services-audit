@@ -18,18 +18,36 @@ const SendIcon = () => (
   </svg>
 )
 
+import { Link } from 'react-router-dom'
+
 const footerColumns = [
   {
     title: 'Services',
-    links: ['Plomberie', 'Ménage', 'Coiffure & Beauté', 'Climatisation', 'Voir tout']
+    links: [
+      { label: 'Plomberie', to: '/services?search=plomberie' },
+      { label: 'Ménage', to: '/services?search=menage' },
+      { label: 'Coiffure & Beauté', to: '/services?search=coiffure' },
+      { label: 'Climatisation', to: '/services?search=climatisation' },
+      { label: 'Voir tout', to: '/services' }
+    ]
   },
   {
     title: 'Babi Services',
-    links: ['À propos', 'Comment ça marche', 'Devenir prestataire', 'Tarifs']
+    links: [
+      { label: 'À propos', to: '/' },
+      { label: 'Comment ça marche', to: '/#how-it-works' },
+      { label: 'Devenir prestataire', to: '/devenir-prestataire' },
+      { label: 'Tarifs', to: '/services' }
+    ]
   },
   {
     title: 'Support',
-    links: ["Centre d'aide", 'Nous contacter', 'Sécurité', 'Conditions']
+    links: [
+      { label: "Centre d'aide", to: '/services' },
+      { label: 'Nous contacter', to: '/devenir-prestataire' },
+      { label: 'Sécurité', to: '/services' },
+      { label: 'Conditions', to: '/services' }
+    ]
   }
 ]
 
@@ -51,13 +69,13 @@ function Footer() {
               La plateforme qui relie les Abidjanais aux meilleurs prestataires de services, près de chez eux.
             </p>
             <div className="flex items-center gap-3">
-              <a href="#" className="w-9 h-9 flex items-center justify-center bg-white/10 hover:bg-babi-green rounded-lg text-white transition-colors">
+              <a href="" target="_blank" rel="noreferrer" className="w-9 h-9 flex items-center justify-center bg-white/10 hover:bg-babi-green rounded-lg text-white transition-colors">
                 <FacebookIcon />
               </a>
-              <a href="#" className="w-9 h-9 flex items-center justify-center bg-white/10 hover:bg-babi-green rounded-lg text-white transition-colors">
+              <a href="" target="_blank" rel="noreferrer" className="w-9 h-9 flex items-center justify-center bg-white/10 hover:bg-babi-green rounded-lg text-white transition-colors">
                 <InstagramIcon />
               </a>
-              <a href="#" className="w-9 h-9 flex items-center justify-center bg-white/10 hover:bg-babi-green rounded-lg text-white transition-colors">
+              <a href="" target="_blank" rel="noreferrer" className="w-9 h-9 flex items-center justify-center bg-white/10 hover:bg-babi-green rounded-lg text-white transition-colors">
                 <SendIcon />
               </a>
             </div>
@@ -67,7 +85,7 @@ function Footer() {
               <div key={index} className="flex flex-col gap-3">
                 <h4 className="text-white font-bold mb-1">{column.title}</h4>
                 {column.links.map((link, i) => (
-                  <a key={i} href="#" className="text-white/50 hover:text-babi-green transition-colors">{link}</a>
+                  <Link key={i} to={link.to} className="text-white/50 hover:text-babi-green transition-colors">{link.label}</Link>
                 ))}
               </div>
             ))}

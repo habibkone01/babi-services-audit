@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id('id_service');
             $table->string('nom_service', 100);
             $table->text('description')->nullable();
+            $table->string('photo_path')->nullable();
             $table->decimal('tarif', 10, 2);
             $table->boolean('disponibilite')->default(true);
             $table->unsignedBigInteger('id_prestataire');

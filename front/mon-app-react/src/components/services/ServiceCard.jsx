@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom"
+import { API_URL } from "../../services/api"
 
 const TagIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 20 20" fill="none">
@@ -48,6 +49,7 @@ function formatMontant(value) {
 
 export default function ServiceCard({ service }) {
   const { id_service, nom_service, description, tarif, disponibilite, prestataire, categorie } = service
+  const imageSrc = service.photo_path?.startsWith('http') ? service.photo_path : `${API_URL}${service.photo_path ?? ''}`
 
   const tags = (description || '')
     .split(',')
@@ -74,9 +76,17 @@ export default function ServiceCard({ service }) {
             </span>
           )}
         </div>
-        <div className="h-32 flex items-center justify-center border border-dashed border-emerald-200 rounded-xl text-emerald-300 text-sm font-mono">
-          photo prestation
-        </div>
+        {service.photo_path ? (
+          <img
+            src={imageSrc}
+            alt={nom_service}
+            className="h-32 w-full object-cover rounded-xl border border-emerald-200"
+          />
+        ) : (
+          <div className="h-32 flex items-center justify-center border border-dashed border-emerald-200 rounded-xl text-emerald-300 text-sm font-mono">
+            photo prestation
+          </div>
+        )}
       </div>
 
       <div className="p-5">

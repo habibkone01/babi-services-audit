@@ -41,5 +41,7 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
         Route::delete('utilisateurs/{id}',               [AdminDashboardController::class, 'deleteUtilisateur']);
         Route::delete('utilisateurs/prestataires/{id}',  [AdminDashboardController::class, 'deletePrestataire']);
         Route::get('missions',                           [AdminDashboardController::class, 'missions']);
+        Route::get('reservations',                       [ReservationController::class, 'adminIndex']);
+        Route::patch('reservations/{id}',                [ReservationController::class, 'adminUpdate']);
     });
 });

@@ -25,8 +25,10 @@ class UpdateServiceRequest extends FormRequest
         return [
             'nom_service'    => 'sometimes|string|max:100',
             'description'    => 'nullable|string',
+            'photo'          => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'photo_path'     => 'nullable|string|max:255',
             'tarif'          => 'sometimes|numeric|min:0',
-            'disponibilite'  => 'boolean',
+            'disponibilite'  => ['sometimes', 'boolean'],
             'id_prestataire' => 'sometimes|exists:prestataires,id_prestataire',
             'id_categorie'   => 'sometimes|exists:categories,id_categorie',
         ];
