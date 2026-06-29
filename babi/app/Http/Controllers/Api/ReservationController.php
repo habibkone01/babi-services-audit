@@ -36,8 +36,7 @@ class ReservationController extends Controller
      */
     public function store(StoreReservationRequest $request)
     {
-        // Pas de prestataire connecté pour confirmer la demande : le rendez-vous
-        // se fait en personne (agence), donc la réservation est confirmée directement.
+        
         $reservation = Reservation::create([
             ...$request->validated(),
             'id_utilisateur' => auth()->id(),
@@ -71,27 +70,6 @@ class ReservationController extends Controller
         abort_if($reservation->id_utilisateur !== auth()->id(), 403);
         $reservation->update($request->validated());
         return response()->json($reservation);
-    }
-
-    public function adminIndex()
-    {
-        $reservations = Reservation::with(['utilisateur', 'service.prestataire', 'avis'])
-            ->orderByDesc('date_reservation')
-            ->get();
-
-        return response()->json($reservations);
-    }
-
-    public function adminUpdate(Request $request, string $id)
-    {
-        $reservation = Reservation::findOrFail($id);
-        $request->validate([
-            'statut' => 'required|in:en_attente,confirmee,annulee,terminee',
-        ]);
-
-        $reservation->update(['statut' => $request->statut]);
-
-        return response()->json($reservation->fresh());
     }
 
     /**

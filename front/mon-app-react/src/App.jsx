@@ -11,7 +11,6 @@ import ServicesAdmin from './pages/ServicesAdmin'
 import ValidationsAdmin from './pages/ValidationsAdmin'
 import UtilisateursAdmin from './pages/UtilisateursAdmin'
 import MissionsAdmin from './pages/MissionsAdmin'
-import ReservationsAdmin from './pages/ReservationsAdmin'
 import ReglagesAdmin from './pages/ReglagesAdmin'
 import ProtectedRoute from './components/ProtectedRoute'
 import ReservationFormPage from './pages/ReservationFormPage'
@@ -88,14 +87,6 @@ function App() {
         element={
           <ProtectedRoute>
             <MissionsAdmin />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/admin/reservations"
-        element={
-          <ProtectedRoute>
-            <ReservationsAdmin />
           </ProtectedRoute>
         }
       />

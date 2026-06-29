@@ -269,21 +269,7 @@ export const apiGetAdminMissions = async () => {
   return { ok: res.ok, data: await res.json() }
 }
 
-export const apiGetAdminReservations = async () => {
-  const res = await fetch(`${API_URL}/api/admin/reservations`, {
-    headers: getAuthHeaders(),
-  })
-  return { ok: res.ok, data: await res.json() }
-}
 
-export const apiUpdateAdminReservation = async (id, status) => {
-  const res = await fetch(`${API_URL}/api/admin/reservations/${id}`, {
-    method: 'PATCH',
-    headers: getHeaders(),
-    body: JSON.stringify({ statut: status }),
-  })
-  return { ok: res.ok, data: await res.json() }
-}
 
 export const apiUpdateProfil = async (data) => {
   const res = await fetch(`${API_URL}/api/profil`, {

@@ -94,7 +94,6 @@ const navItems = [
   { icon: <ListIcon />,        label: 'Services',        to: '/admin/services' },
   { icon: <UsersIcon />,       label: 'Utilisateurs',    to: '/admin/utilisateurs' },
   { icon: <ClipboardIcon />,   label: 'Missions',        to: '/admin/missions' },
-  { icon: <ClipboardIcon />,   label: 'Réservations',    to: '/admin/reservations' },
   { icon: <SettingsIcon />,    label: 'Réglages',        to: '/admin/reglages' },
 ]
 
