@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 const PlumbingIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
     <path d="M12.2491 5.2496C11.9315 5.57363 11.9315 6.09223 12.2491 6.41626L13.5825 7.7496C13.9065 8.06721 14.4251 8.06721 14.7491 7.7496L17.8908 4.60793C18.7488 6.50398 18.3426 8.73323 16.871 10.2048C15.3995 11.6764 13.1702 12.0826 11.2741 11.2246L5.51581 16.9829C4.82546 17.6733 3.70617 17.6733 3.01581 16.9829C2.32546 16.2926 2.32546 15.1733 3.01581 14.4829L8.77415 8.7246C7.91615 6.82854 8.32232 4.59929 9.79391 3.1277C11.2655 1.6561 13.4948 1.24993 15.3908 2.10793L12.2575 5.24126L12.2491 5.2496" stroke="#047857" strokeWidth="1.66667" strokeLinecap="round" strokeLinejoin="round"/>
@@ -137,18 +139,22 @@ function Categories() {
               Que cherchez-vous aujourd'hui ?
             </h2>
           </div>
-          <button className="bg-white border border-gray-200 px-5 py-2.5 rounded-full text-sm font-semibold text-gray-700 hover:border-babi-green hover:text-babi-green transition-colors">
+          <Link to="/services" className="bg-white border border-gray-200 px-5 py-2.5 rounded-full text-sm font-semibold text-gray-700 hover:border-babi-green hover:text-babi-green transition-colors">
             Tous les services →
-          </button>
+          </Link>
         </div>
         
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
           {categories.map((category, index) => (
-            <div key={index} className="bg-white border border-gray-100 rounded-2xl p-5 cursor-pointer hover:-translate-y-1 hover:shadow-lg hover:border-babi-green transition-all flex flex-col gap-2">
+            <Link
+              key={index}
+              to={`/services?categorie=${encodeURIComponent(category.name)}`}
+              className="bg-white border border-gray-100 rounded-2xl p-5 cursor-pointer hover:-translate-y-1 hover:shadow-lg hover:border-babi-green transition-all flex flex-col gap-2"
+            >
               <span className="text-2xl bg-emerald-100 p-2.5 rounded-xl w-fit flex items-center justify-center">{category.icon}</span>
               <span className="font-semibold text-babi-dark text-sm">{category.name}</span>
               <span className="text-xs text-gray-400">{category.pros}</span>
-            </div>
+            </Link>
           ))}
         </div>
       </div>

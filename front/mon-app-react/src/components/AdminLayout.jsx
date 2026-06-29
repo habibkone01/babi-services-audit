@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { apiGetMe, apiLogout } from '../services/api'
 
+// --- ICONS (Inchangés) ---
 const GridIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none">
     <path d="M2.5 3.33333C2.5 2.8731 2.8731 2.5 3.33333 2.5H8.33333C8.79357 2.5 9.16667 2.8731 9.16667 3.33333V8.33333C9.16667 8.79357 8.79357 9.16667 8.33333 9.16667H3.33333C2.8731 9.16667 2.5 8.79357 2.5 8.33333V3.33333Z" stroke="currentColor" strokeWidth="1.66667" strokeLinecap="round" strokeLinejoin="round"/>
@@ -71,6 +72,20 @@ const ListIcon = () => (
   </svg>
 )
 
+// Menu burger Icon
+const MenuIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+  </svg>
+)
+
+// Close Icon
+const CloseIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+  </svg>
+)
+
 const navItems = [
   { icon: <GridIcon />,        label: 'Tableau de bord', to: '/admin' },
   { icon: <ShieldCheckIcon />, label: 'Validations',     to: '/admin/validations' },
@@ -90,6 +105,7 @@ function AdminLayout({ active, title, subtitle, headerActions, topbarSearch, val
   const navigate = useNavigate()
   const [user, setUser] = useState(null)
   const [denied, setDenied] = useState(false)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false) // Gestion responsive
 
   useEffect(() => {
     apiGetMe().then((me) => {
@@ -116,20 +132,45 @@ function AdminLayout({ active, title, subtitle, headerActions, topbarSearch, val
   }
 
   return (
-    <div className="min-h-screen flex bg-babi-cream">
-      <aside className="w-64 bg-babi-dark flex flex-col justify-between p-6 shrink-0">
+    <div className="min-h-screen flex flex-col md:flex-row bg-babi-cream relative">
+      
+      {/* --- OVERLAY MOBILE --- */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 md:hidden" 
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
+      {/* --- SIDEBAR RESPONSIVE --- */}
+      <aside className={`
+        fixed inset-y-0 left-0 z-50 w-64 bg-babi-dark flex flex-col justify-between p-6 shrink-0
+        transform transition-transform duration-300 ease-in-out
+        md:relative md:transform-none
+        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+      `}>
         <div>
-          <div className="flex items-center gap-2 mb-10">
-            <span className="w-2.5 h-2.5 bg-babi-green rounded-full"></span>
-            <span className="text-xl font-extrabold font-bricolage text-white">
-              babi <span className="text-babi-green">admin</span>
-            </span>
+          <div className="flex items-center justify-between mb-10">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 bg-babi-green rounded-full"></span>
+              <span className="text-xl font-extrabold font-bricolage text-white">
+                babi <span className="text-babi-green">admin</span>
+              </span>
+            </div>
+            {/* Bouton fermeture sur Mobile uniquement */}
+            <button 
+              className="text-white md:hidden hover:text-babi-green transition-colors"
+              onClick={() => setIsSidebarOpen(false)}
+            >
+              <CloseIcon />
+            </button>
           </div>
           <nav className="flex flex-col gap-1">
             {navItems.map((item, index) => (
               <Link
                 key={index}
                 to={item.to}
+                onClick={() => setIsSidebarOpen(false)} // Ferme la sidebar sur clic mobile
                 className={`flex items-center gap-3 px-4 py-2.5 rounded-xl font-semibold text-sm transition-colors ${
                   item.label === active ? 'bg-babi-green text-white' : 'text-gray-400 hover:bg-white/5'
                 }`}
@@ -159,18 +200,32 @@ function AdminLayout({ active, title, subtitle, headerActions, topbarSearch, val
         </div>
       </aside>
 
-      <main className="flex-1 p-8 overflow-y-auto">
+      {/* --- CONTEXTE PRINCIPAL (MAIN) --- */}
+      <main className="flex-1 p-4 md:p-8 overflow-y-auto w-full max-w-full">
+        
         {/* Topbar */}
-        <div className="flex items-center justify-between mb-8 gap-4">
-          {/* Barre de recherche — affichée seulement si topbarSearch est passé */}
+        <div className="flex items-center justify-between mb-8 gap-4 bg-white/50 md:bg-transparent p-3 rounded-2xl md:p-0">
+          
+          {/* Bouton burger visible sur mobile uniquement */}
+          <button 
+            onClick={() => setIsSidebarOpen(true)}
+            className="p-2 -ml-2 text-babi-dark md:hidden hover:text-babi-green transition-colors"
+          >
+            <MenuIcon />
+          </button>
+
+          {/* Barre de recherche — responsive width */}
           {topbarSearch ? (
-            <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-full px-4 py-2.5 w-full max-w-sm">
+            <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-full px-4 py-2 w-full max-w-[200px] sm:max-w-sm">
               <SearchIcon />
-              {topbarSearch}
+              <div className="w-full text-sm">
+                {topbarSearch}
+              </div>
             </div>
           ) : (
             <div />
           )}
+
           <div className="flex items-center gap-4 shrink-0">
             <button className="relative text-gray-500 hover:text-babi-dark transition-colors">
               <BellIcon />
@@ -178,22 +233,25 @@ function AdminLayout({ active, title, subtitle, headerActions, topbarSearch, val
                 <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-rose-500 rounded-full"></span>
               )}
             </button>
-            <span className="w-9 h-9 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-sm">
+            <span className="w-9 h-9 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-sm hidden sm:flex">
               {initials(user?.prenom, user?.nom)}
             </span>
           </div>
         </div>
 
-        {/* Titre + actions */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+        {/* Titre + actions de page */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
           <div>
-            <h1 className="text-3xl font-extrabold text-babi-dark font-bricolage">{title}</h1>
-            {subtitle && <p className="text-gray-500 mt-1">{subtitle}</p>}
+            <h1 className="text-2xl md:text-3xl font-extrabold text-babi-dark font-bricolage">{title}</h1>
+            {subtitle && <p className="text-gray-500 text-sm md:text-base mt-1">{subtitle}</p>}
           </div>
-          {headerActions && <div className="shrink-0">{headerActions}</div>}
+          {headerActions && <div className="shrink-0 w-full sm:w-auto">{headerActions}</div>}
         </div>
 
-        {children}
+        {/* Contenu des enfants */}
+        <div className="w-full overflow-x-auto">
+          {children}
+        </div>
       </main>
     </div>
   )

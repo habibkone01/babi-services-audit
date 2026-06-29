@@ -1,3 +1,6 @@
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+
 const avatars = [
   { initials: 'AT', bg: 'bg-violet-200 text-violet-700' },
   { initials: 'KE', bg: 'bg-amber-200 text-amber-700' },
@@ -11,6 +14,23 @@ const listings = [
 ]
 
 function Hero() {
+  const navigate = useNavigate()
+  const [serviceQuery, setServiceQuery] = useState('')
+  const [quartierQuery, setQuartierQuery] = useState('')
+
+  const handleSearch = (event) => {
+    event.preventDefault()
+
+    const params = new URLSearchParams()
+    const service = serviceQuery.trim()
+    const quartier = quartierQuery.trim()
+
+    if (service) params.set('search', service)
+    if (quartier) params.set('quartier', quartier)
+
+    navigate(`/services${params.toString() ? `?${params.toString()}` : ''}`)
+  }
+
   return (
     <section className="relative py-16 px-8 overflow-hidden bg-babi-cream">
       <div className="absolute -top-24 -right-12 w-96 h-96 bg-gradient-to-br from-emerald-200/50 to-emerald-300/30 rounded-full blur-3xl"></div>
@@ -35,7 +55,7 @@ function Hero() {
             Plombiers, coiffeuses, ménagères, traiteurs... Trouvez un pro vérifié, réservez en 2 clics et payez en toute sécurité. Partout à Abidjan.
           </p>
 
-          <div className="bg-white rounded-full shadow-lg p-2 flex items-center gap-2 mb-8">
+          <form onSubmit={handleSearch} className="bg-white rounded-full shadow-lg p-2 flex items-center gap-2 mb-8">
             <div className="flex items-center gap-2 px-4 py-3 flex-1">
               <span className="text-lg opacity-60">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -43,7 +63,7 @@ function Hero() {
                   <path d="M2.66732 4H13.334C14.0699 4 14.6673 4.59745 14.6673 5.33333V12C14.6673 12.7359 14.0699 13.3333 13.334 13.3333H2.66732C1.93143 13.3333 1.33398 12.7359 1.33398 12V5.33333C1.33398 4.59745 1.93143 4 2.66732 4V4" stroke="#8A7A6E" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
               </span>
-              <input type="text" placeholder="Quel service ?" className="bg-transparent border-none outline-none text-gray-700 w-full" />
+              <input type="text" value={serviceQuery} onChange={(event) => setServiceQuery(event.target.value)} placeholder="Quel service ?" className="bg-transparent border-none outline-none text-gray-700 w-full" />
             </div>
             <div className="w-px h-8 bg-gray-200 hidden md:block"></div>
             <div className="flex items-center gap-2 px-4 py-3 flex-1">
@@ -60,9 +80,9 @@ function Hero() {
                   </defs>
                 </svg>
               </span>
-              <input type="text" placeholder="Quel quartier ?" className="bg-transparent border-none outline-none text-gray-700 w-full" />
+              <input type="text" value={quartierQuery} onChange={(event) => setQuartierQuery(event.target.value)} placeholder="Quel quartier ?" className="bg-transparent border-none outline-none text-gray-700 w-full" />
             </div>
-            <button className="bg-babi-green text-white px-6 py-3 rounded-full font-semibold hover:-translate-y-0.5 hover:shadow-xl transition-all flex items-center gap-2 shrink-0">
+            <button type="submit" className="bg-babi-green text-white px-6 py-3 rounded-full font-semibold hover:-translate-y-0.5 hover:shadow-xl transition-all flex items-center gap-2 shrink-0">
               <span>
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
                   <path d="M2 7.33333C2 10.2769 4.38979 12.6667 7.33333 12.6667C10.2769 12.6667 12.6667 10.2769 12.6667 7.33333C12.6667 4.38979 10.2769 2 7.33333 2C4.38979 2 2 4.38979 2 7.33333V7.33333" stroke="white" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round"/>
@@ -71,7 +91,7 @@ function Hero() {
               </span>
               Rechercher
             </button>
-          </div>
+          </form>
 
           <div className="flex items-center gap-4">
             <div className="flex -space-x-3">
@@ -113,7 +133,7 @@ function Hero() {
                   <path d="M13.9995 14.0005L11.1328 11.1338" stroke="#8A7A6E" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
                 <span className="text-sm text-gray-700 flex-1">Coiffeuse · Cocody</span>
-                <button className="bg-babi-green text-white text-xs font-semibold px-3 py-1.5 rounded-lg">Rechercher</button>
+                <button type="button" onClick={() => navigate('/services?search=Coiffeuse&quartier=Cocody')} className="bg-babi-green text-white text-xs font-semibold px-3 py-1.5 rounded-lg">Rechercher</button>
               </div>
 
               <div className="flex items-center gap-2 mb-4">
@@ -138,7 +158,7 @@ function Hero() {
                       </svg>
                       {pro.note}
                     </span>
-                    <button className="bg-babi-green text-white text-xs font-semibold px-3 py-1.5 rounded-lg shrink-0">Réserver</button>
+                    <button type="button" onClick={() => navigate('/services')} className="bg-babi-green text-white text-xs font-semibold px-3 py-1.5 rounded-lg shrink-0">Réserver</button>
                   </div>
                 ))}
               </div>

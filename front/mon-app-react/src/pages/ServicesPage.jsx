@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { ArrowLeft, ChevronDown } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -18,12 +18,19 @@ const DEFAULT_FILTERS = {
 const TRI_OPTIONS = ["Mieux notés", "Moins cher", "Plus récent"];
 
 export default function ServicesPage() {
+  const [searchParams] = useSearchParams();
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [search, setSearch] = useState("");
-  const [filters, setFilters] = useState(DEFAULT_FILTERS);
-  const [tri, setTri] = useState("Mieux notés");
+  const [search, setSearch] = useState(searchParams.get("search") ?? "");
+  const [filters, setFilters] = useState(() => ({
+    ...DEFAULT_FILTERS,
+    categorie: searchParams.get("categorie") ?? null,
+    quartier: searchParams.get("quartier") ?? DEFAULT_FILTERS.quartier,
+    noteMin: Number(searchParams.get("noteMin")) || DEFAULT_FILTERS.noteMin,
+    disponiblesSeulement: searchParams.get("disponiblesSeulement") === "true",
+  }));
+  const [tri, setTri] = useState(searchParams.get("tri") ?? "Mieux notés");
   const [triOpen, setTriOpen] = useState(false);
 
   useEffect(() => {

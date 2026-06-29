@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 const SearchIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="none">
     <path d="M17.5 17.5L13.875 13.875M15.8333 9.16667C15.8333 12.8486 12.8486 15.8333 9.16667 15.8333C5.48477 15.8333 2.5 12.8486 2.5 9.16667C2.5 5.48477 5.48477 2.5 9.16667 2.5C12.8486 2.5 15.8333 5.48477 15.8333 9.16667Z" stroke="currentColor" strokeWidth="1.66667" strokeLinecap="round" strokeLinejoin="round"/>
@@ -18,13 +20,13 @@ function FinalCTA() {
               Des milliers de prestataires vous attendent, partout à Abidjan.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <button className="inline-flex items-center gap-2 bg-gradient-to-r from-babi-green to-babi-green-light text-white px-8 py-4 rounded-2xl font-bold hover:-translate-y-1 hover:shadow-xl transition-all">
+              <Link to="/services" className="inline-flex items-center gap-2 bg-gradient-to-r from-babi-green to-babi-green-light text-white px-8 py-4 rounded-2xl font-bold hover:-translate-y-1 hover:shadow-xl transition-all">
                 <SearchIcon />
                 Chercher un service
-              </button>
-              <button className="bg-transparent border border-white/20 text-white px-8 py-4 rounded-2xl font-bold hover:bg-white/10 transition-all">
+              </Link>
+              <Link to="/devenir-prestataire" className="bg-transparent border border-white/20 text-white px-8 py-4 rounded-2xl font-bold hover:bg-white/10 transition-all">
                 Proposer mes services
-              </button>
+              </Link>
             </div>
           </div>
         </div>

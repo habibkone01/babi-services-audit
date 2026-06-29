@@ -33,9 +33,9 @@ function ProCTA() {
                 Devenir prestataire
                 <ArrowRightIcon />
               </Link>
-              <button className="bg-transparent border border-white/40 text-white px-6 py-3.5 rounded-full font-bold hover:bg-white/10 transition-all">
+              <Link to="/services" className="bg-transparent border border-white/40 text-white px-6 py-3.5 rounded-full font-bold hover:bg-white/10 transition-all">
                 En savoir plus
-              </button>
+              </Link>
             </div>
           </div>
           <div className="flex-1 flex flex-col gap-4 w-full">
