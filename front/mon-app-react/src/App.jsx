@@ -16,6 +16,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 import ReservationFormPage from './pages/ReservationFormPage'
 import MesReservationsPage from './pages/MesReservationsPage'
 import DevenirPrestataire from './pages/DevenirPrestataire'
+import ServiceDetailPage from './pages/ServiceDetailPage'
 
 function App() {
   return (
@@ -97,6 +98,7 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route path="/services/:id" element={<ServiceDetailPage />} />
       <Route
         path="/services/:id/reserver"
         element={
