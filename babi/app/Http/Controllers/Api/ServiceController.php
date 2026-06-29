@@ -7,7 +7,9 @@ use App\Mail\AnnoncePublieeMail;
 use App\Models\Service;
 use App\Http\Requests\Service\StoreServiceRequest;
 use App\Http\Requests\Service\UpdateServiceRequest;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class ServiceController extends Controller
 {
@@ -24,7 +26,18 @@ class ServiceController extends Controller
      */
     public function store(StoreServiceRequest $request)
     {
-        $service = Service::create($request->validated());
+        $data = $request->validated();
+
+        if ($request->hasFile('photo')) {
+            $photo = $request->file('photo');
+            $uploadDir = public_path('uploads/services');
+            File::ensureDirectoryExists($uploadDir);
+            $filename = time() . '_' . Str::random(8) . '.' . $photo->getClientOriginalExtension();
+            $photo->move($uploadDir, $filename);
+            $data['photo_path'] = asset('uploads/services/' . $filename);
+        }
+
+        $service = Service::create($data);
         $service->load(['prestataire', 'categorie']);
 
         if ($service->prestataire?->email) {
@@ -49,7 +62,18 @@ class ServiceController extends Controller
     public function update(UpdateServiceRequest $request, string $id)
     {
         $service = Service::findOrFail($id);
-        $service->update($request->validated());
+        $data = $request->validated();
+
+        if ($request->hasFile('photo')) {
+            $photo = $request->file('photo');
+            $uploadDir = public_path('uploads/services');
+            File::ensureDirectoryExists($uploadDir);
+            $filename = time() . '_' . Str::random(8) . '.' . $photo->getClientOriginalExtension();
+            $photo->move($uploadDir, $filename);
+            $data['photo_path'] = asset('uploads/services/' . $filename);
+        }
+
+        $service->update($data);
         return response()->json($service);
     }
 

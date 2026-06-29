@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import AdminLayout from '../components/AdminLayout'
 import {
+  API_URL,
   apiGetServices,
   apiGetPrestataires,
   apiGetCategories,
@@ -47,6 +48,8 @@ function ServicesAdmin() {
   const [form, setForm] = useState(emptyForm)
   const [error, setError] = useState('')
   const [saving, setSaving] = useState(false)
+  const [photoFile, setPhotoFile] = useState(null)
+  const [photoPreview, setPhotoPreview] = useState('')
 
   useEffect(() => {
     Promise.all([apiGetServices(), apiGetPrestataires(), apiGetCategories()]).then(
@@ -62,6 +65,8 @@ function ServicesAdmin() {
   function openCreateModal() {
     setEditingId(null)
     setForm(emptyForm)
+    setPhotoFile(null)
+    setPhotoPreview('')
     setError('')
     setModalOpen(true)
   }
@@ -76,6 +81,8 @@ function ServicesAdmin() {
       id_prestataire: service.id_prestataire,
       id_categorie: service.id_categorie,
     })
+    setPhotoFile(null)
+    setPhotoPreview(service.photo_path ? (service.photo_path.startsWith('http') ? service.photo_path : `${API_URL}${service.photo_path}`) : '')
     setError('')
     setModalOpen(true)
   }
@@ -85,14 +92,33 @@ function ServicesAdmin() {
     setForm({ ...form, [name]: type === 'checkbox' ? checked : value })
   }
 
+  function handlePhotoChange(e) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setPhotoFile(file)
+    setPhotoPreview(URL.createObjectURL(file))
+  }
+
   async function handleSubmit(e) {
     e.preventDefault()
     setError('')
     setSaving(true)
 
+    const formData = new FormData()
+    formData.append('nom_service', form.nom_service)
+    formData.append('description', form.description ?? '')
+    formData.append('tarif', String(form.tarif))
+    formData.append('disponibilite', form.disponibilite ? '1' : '0')
+    formData.append('id_prestataire', String(form.id_prestataire))
+    formData.append('id_categorie', String(form.id_categorie))
+
+    if (photoFile) {
+      formData.append('photo', photoFile)
+    }
+
     const { ok, data } = editingId
-      ? await apiUpdateService(editingId, form)
-      : await apiCreateService(form)
+      ? await apiUpdateService(editingId, formData)
+      : await apiCreateService(formData)
 
     setSaving(false)
 
@@ -194,13 +220,15 @@ function ServicesAdmin() {
       </div>
 
       {modalOpen && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-md">
-            <h2 className="text-xl font-extrabold text-babi-dark font-bricolage mb-4">
-              {editingId ? "Modifier l'annonce" : 'Ajouter une annonce'}
-            </h2>
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-3 sm:p-4 z-50">
+          <div className="bg-white rounded-2xl w-full max-w-md max-h-[90vh] overflow-hidden flex flex-col">
+            <div className="px-6 pt-6 pb-3">
+              <h2 className="text-xl font-extrabold text-babi-dark font-bricolage">
+                {editingId ? "Modifier l'annonce" : 'Ajouter une annonce'}
+              </h2>
+            </div>
 
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-6 pb-6 flex flex-col gap-4">
               {error && (
                 <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-2.5">{error}</p>
               )}
@@ -278,18 +306,35 @@ function ServicesAdmin() {
                 </select>
               </div>
 
-              <label className="flex items-center gap-2 text-sm font-semibold text-babi-dark">
+              <div>
+                <label className="block text-sm font-semibold text-babi-dark mb-1.5">Photo de la prestation</label>
                 <input
-                  type="checkbox"
-                  name="disponibilite"
-                  checked={form.disponibilite}
-                  onChange={handleChange}
-                  className="w-4 h-4 accent-babi-green"
+                  type="file"
+                  accept="image/*"
+                  onChange={handlePhotoChange}
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 outline-none focus:border-babi-green transition-colors bg-white"
                 />
-                Disponible immédiatement
-              </label>
+                {photoPreview && (
+                  <div className="mt-2">
+                    <img src={photoPreview} alt="Aperçu de la prestation" className="h-28 w-full object-cover rounded-xl border border-gray-100" />
+                  </div>
+                )}
+              </div>
 
-              <div className="flex items-center gap-3 mt-2">
+              <div>
+                <label className="block text-sm font-semibold text-babi-dark mb-1.5">Disponibilité</label>
+                <select
+                  name="disponibilite"
+                  value={String(form.disponibilite)}
+                  onChange={(e) => setForm({ ...form, disponibilite: e.target.value === 'true' })}
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 outline-none focus:border-babi-green transition-colors bg-white"
+                >
+                  <option value="true">Oui, disponible</option>
+                  <option value="false">Non, indisponible</option>
+                </select>
+              </div>
+
+              <div className="flex items-center gap-3 mt-2 sticky bottom-0 bg-white pt-2">
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}

@@ -187,19 +187,21 @@ export const apiDeleteCategorie = async (id) => {
 }
 
 export const apiCreateService = async (data) => {
+  const isFormData = data instanceof FormData
   const res = await fetch(`${API_URL}/api/services`, {
     method: 'POST',
-    headers: getHeaders(),
-    body: JSON.stringify(data),
+    headers: isFormData ? getAuthHeaders() : getHeaders(),
+    body: isFormData ? data : JSON.stringify(data),
   })
   return { ok: res.ok, status: res.status, data: await res.json() }
 }
 
 export const apiUpdateService = async (id, data) => {
+  const isFormData = data instanceof FormData
   const res = await fetch(`${API_URL}/api/services/${id}`, {
     method: 'PUT',
-    headers: getHeaders(),
-    body: JSON.stringify(data),
+    headers: isFormData ? getAuthHeaders() : getHeaders(),
+    body: isFormData ? data : JSON.stringify(data),
   })
   return { ok: res.ok, status: res.status, data: await res.json() }
 }
@@ -263,6 +265,22 @@ export const apiDeleteAdminPrestataire = async (id) => {
 export const apiGetAdminMissions = async () => {
   const res = await fetch(`${API_URL}/api/admin/missions`, {
     headers: getAuthHeaders(),
+  })
+  return { ok: res.ok, data: await res.json() }
+}
+
+export const apiGetAdminReservations = async () => {
+  const res = await fetch(`${API_URL}/api/admin/reservations`, {
+    headers: getAuthHeaders(),
+  })
+  return { ok: res.ok, data: await res.json() }
+}
+
+export const apiUpdateAdminReservation = async (id, status) => {
+  const res = await fetch(`${API_URL}/api/admin/reservations/${id}`, {
+    method: 'PATCH',
+    headers: getHeaders(),
+    body: JSON.stringify({ statut: status }),
   })
   return { ok: res.ok, data: await res.json() }
 }
