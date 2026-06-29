@@ -212,6 +212,31 @@ export const apiDeleteService = async (id) => {
   return { ok: res.ok }
 }
 
+export const apiGetServiceAvis = async (id) => {
+  const res = await fetch(`${API_URL}/api/services/${id}/avis`, {
+    headers: { Accept: 'application/json' },
+  })
+  return { ok: res.ok, data: await res.json() }
+}
+
+export const apiCreateAvis = async (data) => {
+  const res = await fetch(`${API_URL}/api/avis`, {
+    method: 'POST',
+    headers: getHeaders(),
+    body: JSON.stringify(data),
+  })
+  return { ok: res.ok, status: res.status, data: await res.json() }
+}
+
+export const apiSignalerAvis = async (id, motif) => {
+  const res = await fetch(`${API_URL}/api/avis/${id}/signaler`, {
+    method: 'POST',
+    headers: getHeaders(),
+    body: JSON.stringify({ motif }),
+  })
+  return { ok: res.ok, status: res.status, data: await res.json() }
+}
+
 export const apiGetAdminUtilisateurs = async () => {
   const res = await fetch(`${API_URL}/api/admin/utilisateurs`, {
     headers: getAuthHeaders(),
