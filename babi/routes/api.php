@@ -19,12 +19,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('profil/password', [AuthController::class, 'changePassword']);
     Route::apiResource('reservations', ReservationController::class);
     Route::apiResource('avis', AvisController::class);
+    Route::post('avis/{id}/signaler', [AvisController::class, 'signaler']);
 });
 
 Route::apiResource('prestataires', PrestaireController::class)->only(['index', 'show']);
 Route::post('prestataires/candidature', [PrestaireController::class, 'candidater']);
 Route::apiResource('categories', CategorieController::class)->only(['index', 'show']);
 Route::apiResource('services',   ServiceController::class)->only(['index', 'show']);
+Route::get('services/{id}/avis', [AvisController::class, 'parService']);
 
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::apiResource('prestataires', PrestaireController::class)->only(['store', 'update', 'destroy']);
