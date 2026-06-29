@@ -284,3 +284,19 @@ export const apiChangePassword = async (data) => {
   })
   return { ok: res.ok, data: await res.json() }
 }
+
+export const apiGetAllServices = async () => {
+  const res = await fetch(`${API_URL}/api/services`, {
+    headers: { Accept: 'application/json' },
+  })
+  if (!res.ok) throw new Error(`Erreur API ${res.status}`)
+  return res.json()
+}
+
+export const apiGetServiceById = async (id) => {
+  const res = await fetch(`${API_URL}/api/services/${id}`, {
+    headers: { Accept: 'application/json' },
+  })
+  if (!res.ok) throw new Error(`Erreur API ${res.status}`)
+  return res.json()
+}

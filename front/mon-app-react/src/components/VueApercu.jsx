@@ -99,12 +99,22 @@ export default function VueApercu({ user, reservations, recommandes, loading }) 
               </div>
 
               <div className="flex items-center gap-3">
-                <button className="flex-1 flex items-center justify-center gap-2 bg-white border border-gray-200 text-babi-dark font-semibold py-3 rounded-xl hover:border-babi-green transition-colors text-sm">
-                  <MessageIcon /> Message
-                </button>
-                <button className="flex-1 flex items-center justify-center gap-2 bg-babi-green text-white font-semibold py-3 rounded-xl hover:-translate-y-0.5 hover:shadow-lg transition-all text-sm">
-                  <PhoneIcon /> Appeler
-                </button>
+
+                {prochaine.service?.prestataire?.telephone ? (
+                  <a
+                    href={`tel:${prochaine.service.prestataire.telephone}`}
+                    className="flex-1 flex items-center justify-center gap-2 bg-babi-green text-white font-semibold py-3 rounded-xl hover:-translate-y-0.5 hover:shadow-lg transition-all text-sm"
+                  >
+                    <PhoneIcon /> Appeler
+                  </a>
+                ) : (
+                  <button
+                    disabled
+                    className="flex-1 flex items-center justify-center gap-2 bg-gray-200 text-gray-400 font-semibold py-3 rounded-xl cursor-not-allowed text-sm"
+                  >
+                    <PhoneIcon /> Numéro indisponible
+                  </button>
+                )}
               </div>
             </>
           ) : (
