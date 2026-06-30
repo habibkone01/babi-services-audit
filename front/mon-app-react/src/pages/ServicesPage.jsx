@@ -18,7 +18,7 @@ const DEFAULT_FILTERS = {
 const TRI_OPTIONS = ["Mieux notés", "Moins cher", "Plus récent"];
 
 export default function ServicesPage() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -98,9 +98,10 @@ export default function ServicesPage() {
               filters={filters}
               onChange={setFilters}
               onReset={() => {
-                setFilters(DEFAULT_FILTERS);
+                setFilters({ ...DEFAULT_FILTERS });
                 setSearch("");
                 setTri("Mieux notés");
+                setSearchParams(new URLSearchParams());
               }}
             />
 
