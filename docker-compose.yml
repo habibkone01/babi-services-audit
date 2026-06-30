@@ -1,0 +1,65 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: babi_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: babiservice
+      MYSQL_USER: babiuser
+      MYSQL_PASSWORD: babipass
+      MYSQL_ROOT_PASSWORD: rootpass
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  back:
+    build:
+      context: ./babi
+    container_name: babi_back
+    restart: unless-stopped
+    volumes:
+      - ./babi:/var/www/html
+      - /var/www/html/vendor 
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./babi/.env
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  front:
+    build:
+      context: ./front/mon-app-react
+    container_name: babi_front
+    restart: unless-stopped
+    volumes:
+      - ./front/mon-app-react:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    depends_on:
+      - back
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: babi_phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: babiuser
+      PMA_PASSWORD: babipass
+    depends_on:
+      mysql:
+        condition: service_healthy    
+
+volumes:
+  mysql_data:

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { apiGetMe, apiGetReservations, apiGetServices, apiLogout } from '../services/api'
+import { apiGetMe, apiGetReservations, apiGetServices, apiLogout, apiUpdateReservation, apiCreateAvis } from '../services/api'
 
 import VueApercu       from '../components/VueApercu'
 import VueReservations from '../components/VueReservations'
@@ -56,13 +56,29 @@ export default function Dashboard() {
 
   async function handleCancel(id) {
     if (!confirm('Annuler cette réservation ?')) return
-    const { apiUpdateReservation } = await import('../services/api')
     const res = await apiUpdateReservation(id, { statut: 'annulee' })
     if (res.ok) {
       setReservations((prev) => prev.map((r) => (r.id_reservation === id ? res.data : r)))
     } else {
       alert("Impossible d'annuler la réservation.")
     }
+  }
+
+  async function handleMarkTerminee(id) {
+    if (!confirm('Confirmer que cette prestation est terminée ?')) return
+    const res = await apiUpdateReservation(id, { statut: 'terminee' })
+    if (res.ok) {
+      setReservations((prev) => prev.map((r) => (r.id_reservation === id ? res.data : r)))
+    } else {
+      alert('Impossible de mettre à jour la réservation pour le moment.')
+    }
+  }
+
+  async function handleRate(id, payload) {
+    const res = await apiCreateAvis({ ...payload, id_reservation: id })
+    if (!res.ok) return false
+    setReservations((prev) => prev.map((r) => (r.id_reservation === id ? { ...r, avis: res.data } : r)))
+    return true
   }
 
   const aVenir = reservations.filter((r) => ['en_attente', 'confirmee'].includes(r.statut))
@@ -173,6 +189,8 @@ export default function Dashboard() {
             reservations={reservations}
             loading={loading}
             onCancel={handleCancel}
+            onMarkTerminee={handleMarkTerminee}
+            onRate={handleRate}
           />
         )}
 

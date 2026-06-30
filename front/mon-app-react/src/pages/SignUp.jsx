@@ -41,7 +41,7 @@ const checklist = [
 
 function SignUp() {
   const navigate = useNavigate()
-  const [form, setForm] = useState({ prenom: '', nom: '', email: '', telephone: '', mot_de_passe: '' })
+  const [form, setForm] = useState({ prenom: '', nom: '', email: '', telephone: '', mot_de_passe: '', mot_de_passe_confirmation: '' })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -52,6 +52,12 @@ function SignUp() {
   async function handleSubmit(e) {
     e.preventDefault()
     setError('')
+
+    if (form.mot_de_passe !== form.mot_de_passe_confirmation) {
+      setError('Les mots de passe ne correspondent pas.')
+      return
+    }
+
     setLoading(true)
     const { ok, data } = await apiRegister(form)
     if (!ok) {
@@ -185,6 +191,19 @@ function SignUp() {
                 type="password"
                 name="mot_de_passe"
                 value={form.mot_de_passe}
+                onChange={handleChange}
+                placeholder="········"
+                required
+                minLength={8}
+                className="w-full border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-babi-green transition-colors bg-white"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-babi-dark mb-1.5">Confirmer le mot de passe</label>
+              <input
+                type="password"
+                name="mot_de_passe_confirmation"
+                value={form.mot_de_passe_confirmation}
                 onChange={handleChange}
                 placeholder="········"
                 required

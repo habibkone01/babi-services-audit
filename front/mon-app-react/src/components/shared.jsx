@@ -72,6 +72,12 @@ export const PhoneIcon = () => (
   </svg>
 )
 
+export const StarIcon = ({ filled = false }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill={filled ? '#F5A623' : 'none'}>
+    <path d="M10 1.66602L12.5729 6.87928L18.3333 7.7202L14.1667 11.7793L15.1459 17.5152L10 14.8127L4.85413 17.5152L5.83333 11.7793L1.66667 7.7202L7.42706 6.87928L10 1.66602Z" stroke={filled ? '#F5A623' : '#D1D5DB'} strokeWidth="1.2" strokeLinejoin="round"/>
+  </svg>
+)
+
 export function initials(prenom, nom) {
   return `${(prenom?.[0] ?? '').toUpperCase()}${(nom?.[0] ?? '').toUpperCase()}`
 }
@@ -85,7 +91,7 @@ export function formatDateHeure(dateReservation, heureReservation) {
   return heure ? `${date} · ${heure}` : date
 }
 
-// ── Constantes ───────────────────────────────────────────────
+// ── Constantes ──────────────────────────────────────────
 export const avatarPalette = [
   'bg-violet-200 text-violet-700',
   'bg-amber-200 text-amber-700',
