@@ -37,7 +37,7 @@ function App() {
       <Route
         path="/admin"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute adminOnly>
             <AdminDashboard />
           </ProtectedRoute>
         }
@@ -45,7 +45,7 @@ function App() {
       <Route
         path="/admin/validations"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute adminOnly>
             <ValidationsAdmin />
           </ProtectedRoute>
         }
@@ -53,7 +53,7 @@ function App() {
       <Route
         path="/admin/prestataires"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute adminOnly>
             <PrestatairesAdmin />
           </ProtectedRoute>
         }
@@ -61,7 +61,7 @@ function App() {
       <Route
         path="/admin/categories"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute adminOnly>
             <CategoriesAdmin />
           </ProtectedRoute>
         }
@@ -69,7 +69,7 @@ function App() {
       <Route
         path="/admin/services"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute adminOnly>
             <ServicesAdmin />
           </ProtectedRoute>
         }
@@ -77,7 +77,7 @@ function App() {
       <Route
         path="/admin/utilisateurs"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute adminOnly>
             <UtilisateursAdmin />
           </ProtectedRoute>
         }
@@ -85,7 +85,7 @@ function App() {
       <Route
         path="/admin/missions"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute adminOnly>
             <MissionsAdmin />
           </ProtectedRoute>
         }
@@ -93,7 +93,7 @@ function App() {
       <Route
         path="/admin/reglages"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute adminOnly>
             <ReglagesAdmin />
           </ProtectedRoute>
         }
