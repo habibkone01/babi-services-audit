@@ -7,7 +7,6 @@ describe('Réservations', () => {
   let idService
 
   before(() => {
-    // Créer données de test (admin + service + catégorie + prestataire)
     cy.task('seedCypress').then((serviceId) => {
       idService = serviceId
 
@@ -21,7 +20,6 @@ describe('Réservations', () => {
         mot_de_passe_confirmation: motDePasse,
       })
 
-      // Se connecter en tant que client
       cy.request('POST', `${API}/api/login`, {
         email,
         mot_de_passe: motDePasse,
@@ -38,7 +36,6 @@ describe('Réservations', () => {
   })
 
   it('crée une réservation et la voit dans la liste', () => {
-    // Créer la réservation via l'API
     cy.request({
       method: 'POST',
       url: `${API}/api/reservations`,
@@ -46,13 +43,13 @@ describe('Réservations', () => {
       body: {
         id_service: idService,
         date_reservation: '2027-01-15',
+        heure_reservation: '10:00',
         message: 'Test Cypress',
       },
     }).then((res) => {
       expect(res.status).to.eq(201)
     })
 
-    // Se connecter sur le front et aller sur /reservations
     cy.window().then((win) => win.localStorage.setItem('token', clientToken))
     cy.visit('/reservations')
 
