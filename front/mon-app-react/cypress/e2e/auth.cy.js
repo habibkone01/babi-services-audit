@@ -1,5 +1,3 @@
-const API = 'http://localhost:8000'
-
 describe('Authentification', () => {
   const email = `test_${Date.now()}@babi.com`
   const motDePasse = 'password123'
