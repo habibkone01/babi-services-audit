@@ -43,8 +43,8 @@ class AuthController extends Controller
     }
 
     public function logout(): JsonResponse
-    {
-        auth()->user()->currentAccessToken()->delete();
+   {
+        auth('sanctum')->user()->tokens()->delete();
         return response()->json(['message' => 'Déconnecté avec succès']);
     }
 

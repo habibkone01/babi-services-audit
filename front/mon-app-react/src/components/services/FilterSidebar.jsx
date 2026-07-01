@@ -117,6 +117,8 @@ export default function FilterSidebar({ filters, onChange, onReset }) {
           <p className="text-xs text-[#7A9C90] mt-0.5">Masquer les pros occupés</p>
         </div>
         <button
+          type="button"
+          aria-pressed={disponiblesSeulement}
           onClick={() => onChange({ ...filters, disponiblesSeulement: !disponiblesSeulement })}
           className={`w-11 h-6 rounded-full relative transition-colors flex-shrink-0 ${
             disponiblesSeulement ? "bg-[#0E9F6E]" : "bg-[#DCEBE3]"
@@ -128,6 +130,7 @@ export default function FilterSidebar({ filters, onChange, onReset }) {
 
       {/* Réinitialiser */}
       <button
+        type="button"
         onClick={onReset}
         className="w-full flex items-center justify-center gap-2 py-3 rounded-lg border border-[#DCEBE3] text-sm font-medium text-[#0B2B26] hover:bg-[#F0F7F4] transition-colors"
       >
