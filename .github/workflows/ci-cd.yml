@@ -127,6 +127,10 @@ jobs:
           DB_PASSWORD=babipass
           EOF
 
+      - name: Installer les dépendances front (pour Cypress)
+        working-directory: front/mon-app-react
+        run: npm ci
+
       - name: Démarrer la stack Docker complète
         run: docker compose up -d --build
 
@@ -146,10 +150,6 @@ jobs:
 
       - name: Lancer les migrations (conteneur)
         run: docker compose exec -T back php artisan migrate --force
-
-      - name: Installer les dépendances front (pour Cypress)
-        working-directory: front/mon-app-react
-        run: npm ci
 
       - name: Lancer les tests Cypress
         working-directory: front/mon-app-react
