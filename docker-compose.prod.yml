@@ -35,22 +35,17 @@ services:
       - babi_network
 
   front:
-      build:
-        context: ./front/mon-app-react
-        dockerfile: Dockerfile
-      container_name: babi_front
-      restart: unless-stopped
-      environment:
-        VITE_API_URL: http://localhost:8000
-      volumes:
-        - ./front/mon-app-react:/app
-        - node_modules_data:/app/node_modules
-      ports:
-        - "5173:5173"
-      depends_on:
-        - back
-      networks:
-        - babi_network
+    build:
+      context: ./front/mon-app-react
+      dockerfile: Dockerfile.prod
+    container_name: babi_front_prod
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - back
+    networks:
+      - babi_network
 
 networks:
   babi_network:
