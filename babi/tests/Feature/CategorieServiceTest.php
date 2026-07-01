@@ -7,6 +7,7 @@ use App\Models\Prestataire;
 use App\Models\Service;
 use App\Models\Utilisateur;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
@@ -78,6 +79,8 @@ class CategorieServiceTest extends TestCase
 
     public function test_un_admin_peut_creer_un_service(): void
     {
+        Mail::fake();
+
         $admin = Utilisateur::factory()->admin()->create();
         $prestataire = Prestataire::factory()->create();
         $categorie = Categorie::factory()->create();

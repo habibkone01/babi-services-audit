@@ -68,21 +68,14 @@ class LoginTest extends TestCase
     }
 
     public function test_logout_invalide_le_token(): void
-   {
+    {
         $utilisateur = Utilisateur::factory()->create();
-
-        $login = $this->postJson('/api/login', [
-        'email' => $utilisateur->email,
-        'mot_de_passe' => 'password',
-        ]);
-        $token = $login->json('token');
+        $token = $utilisateur->createToken('test')->plainTextToken;
 
         $this->withHeader('Authorization', "Bearer $token")
-        ->postJson('/api/logout')
-        ->assertOk();
+            ->postJson('/api/logout')
+            ->assertOk();
 
-        $this->assertDatabaseMissing('personal_access_tokens', [
-        'tokenable_id' => $utilisateur->id_utilisateur,
-        ]);
+        $this->assertDatabaseCount('personal_access_tokens', 0);
     }
 }

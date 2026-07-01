@@ -59,8 +59,7 @@ function SignUp() {
       setLoading(false)
       return
     }
-    localStorage.setItem('token', data.token)
-    navigate('/')
+    navigate('/connexion')
   }
 
   return (
