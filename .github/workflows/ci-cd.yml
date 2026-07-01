@@ -181,6 +181,6 @@ jobs:
         run: npm install -g @railway/cli
 
       - name: Déployer sur Railway
-        run: railway up --service back --detach
+        run: railway up --service "-babi-services" --detach
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
