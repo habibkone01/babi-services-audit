@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Prestataire;
 use App\Models\Utilisateur;
 use App\Models\Reservation;
+use App\Models\Avis;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
