@@ -91,7 +91,7 @@ export function formatDateHeure(dateReservation, heureReservation) {
   return heure ? `${date} · ${heure}` : date
 }
 
-// ── Constantes ───────────────────────────────────────────────
+// ── Constantes ──────────────────────────────────────────
 export const avatarPalette = [
   'bg-violet-200 text-violet-700',
   'bg-amber-200 text-amber-700',

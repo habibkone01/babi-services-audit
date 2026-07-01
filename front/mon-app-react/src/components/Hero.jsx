@@ -60,7 +60,7 @@ function Hero() {
               <span className="text-lg opacity-60">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
                   <path d="M10.6673 13.333V2.66634C10.6673 1.93045 10.0699 1.33301 9.33398 1.33301H6.66732C5.93143 1.33301 5.33398 1.93045 5.33398 2.66634V13.333" stroke="#8A7A6E" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M2.66732 4H13.334C14.0699 4 14.6673 4.59745 14.6673 5.33333V12C14.6673 12.7359 14.0699 13.3333 13.334 13.3333H2.66732C1.93143 13.3333 1.33398 12.7359 1.33398 12V5.33333C1.33398 4.59745 1.93143 4 2.66732 4V4" stroke="#8A7A6E" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M2.66732 4H13.334C14.0699 4 14.6673 4.59745 14.6673 5.33333V12C14.6673 12.7359 14.0699 13.3333 13.334 13.3333H2.66732C1.93143 13.3333 1.33398 12.7359 1.33398 12V5.33333C1.33398 4.5975 1.93143 4 2.66732 4V4" stroke="#8A7A6E" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
               </span>
               <input type="text" value={serviceQuery} onChange={(event) => setServiceQuery(event.target.value)} placeholder="Quel service ?" className="bg-transparent border-none outline-none text-gray-700 w-full" />
@@ -111,12 +111,12 @@ function Hero() {
         </div>
 
         <div className="relative">
-{/*           <span className="absolute -top-4 left-4 z-20 inline-flex items-center gap-1.5 bg-babi-dark text-white text-xs font-semibold px-3 py-2 rounded-full shadow-lg">
+          <span className="absolute -top-4 left-4 z-20 inline-flex items-center gap-1.5 bg-babi-dark text-white text-xs font-semibold px-3 py-2 rounded-full shadow-lg">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 16 16" fill="none">
               <path d="M8 1.33301L13.3333 3.33301V7.33301C13.3333 10.833 10.6667 13.333 8 14.6663C5.33333 13.333 2.66667 10.833 2.66667 7.33301V3.33301L8 1.33301Z" stroke="white" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
             Profils vérifiés
-          </span> */}
+          </span>
 
           <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden">
             <div className="flex items-center gap-2 px-4 py-3 border-b border-gray-100">

@@ -27,12 +27,6 @@ const StarIcon = () => (
   </svg>
 )
 
-const GoogleIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none">
-    <path d="M18.1711 8.36791H9.99106V11.8189H14.7011C14.2811 13.9889 12.4111 15.2689 9.99106 15.2689C7.14106 15.2689 4.85106 13.0089 4.85106 10.0689C4.85106 7.12891 7.14106 4.86891 9.99106 4.86891C11.2511 4.86891 12.3911 5.32891 13.2711 6.07891L15.8511 3.49891C14.2711 2.07891 12.2411 1.21891 9.99106 1.21891C5.16106 1.21891 1.25106 5.12891 1.25106 9.95891C1.25106 14.7889 5.16106 18.6989 9.99106 18.6989C14.3411 18.6989 18.4011 15.5689 18.4011 9.95891C18.4011 9.41891 18.3411 8.88891 18.1711 8.36791Z" fill="currentColor"/>
-  </svg>
-)
-
 const checklist = [
   '2 400+ prestataires vérifiés',
   'Paiement Mobile Money sécurisé',
@@ -219,17 +213,6 @@ function SignUp() {
               {loading ? 'Création...' : 'Créer mon compte'}
             </button>
           </form>
-
-          <div className="flex items-center gap-3 my-6">
-            <div className="flex-1 h-px bg-gray-200"></div>
-            <span className="text-gray-400 text-sm">ou</span>
-            <div className="flex-1 h-px bg-gray-200"></div>
-          </div>
-
-          <button className="w-full flex items-center justify-center gap-2 bg-white border border-gray-200 text-babi-dark font-semibold py-3.5 rounded-2xl hover:border-babi-green transition-colors">
-            <GoogleIcon />
-            Continuer avec Google
-          </button>
 
           <p className="text-center text-gray-500 mt-6">
             Déjà un compte ? <Link to="/connexion" className="text-babi-green font-semibold hover:underline">Se connecter</Link>
