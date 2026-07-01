@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import {
   CalendarIcon, ClockIcon, CheckCircleIcon, WalletIcon,
-  MessageIcon, PhoneIcon, PinIcon, MoneyIcon,
+   PhoneIcon, PinIcon, MoneyIcon,
   initials, formatMontant, formatDateHeure,
   avatarBg, statutLabels, statutStyles,
 } from './shared'
