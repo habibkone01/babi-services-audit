@@ -14,10 +14,9 @@ class AdminDashboardController extends Controller
     public function index()
     {
         $stats = [
-            'total_utilisateurs' => DB::table('utilisateurs')->count(),
+            'total_utilisateurs' => Utilisateur::count(),
             'total_prestataires' => Prestataire::where('statut', 'valide')->count(),
-            'reservations_mois'  => DB::table('reservations')
-                ->whereMonth('created_at', now()->month)
+            'reservations_mois'  => Reservation::whereMonth('created_at', now()->month)
                 ->whereYear('created_at', now()->year)
                 ->count(),
             'volume_traite'      => DB::table('reservations')
@@ -26,17 +25,18 @@ class AdminDashboardController extends Controller
                 ->sum('services.tarif'),
         ];
 
-        $reservations_par_mois = DB::table('reservations')
-            ->selectRaw('MONTH(created_at) as mois, COUNT(*) as total')
-            ->whereYear('created_at', now()->year)
-            ->groupBy('mois')
-            ->orderBy('mois')
-            ->get();
+        $reservations_par_mois = Reservation::whereYear('created_at', now()->year)
+            ->get()
+            ->groupBy(fn ($r) => $r->created_at->month)
+            ->map->count()
+            ->sortKeys()
+            ->map(fn ($total, $mois) => ['mois' => $mois, 'total' => $total])
+            ->values();
 
         $activite_recente = [
-            'derniers_utilisateurs'  => DB::table('utilisateurs')->latest()->limit(5)->get(),
-            'dernieres_reservations' => DB::table('reservations')->where('statut', 'confirmee')->latest()->limit(5)->get(),
-            'derniers_avis'          => DB::table('avis')->latest()->limit(5)->get(),
+            'derniers_utilisateurs'  => Utilisateur::latest()->limit(5)->get(),
+            'dernieres_reservations' => Reservation::where('statut', 'confirmee')->latest()->limit(5)->get(),
+            'derniers_avis'          => Avis::latest()->limit(5)->get(),
         ];
 
         $a_valider = Prestataire::with('categorie')
