@@ -140,12 +140,18 @@ export default function ServiceDetailPage() {
                   Occupé
                 </span>
               )}
-              <Link
-                to={`/services/${id}/reserver`}
-                className="block mt-3 bg-[#0E9F6E] text-white text-sm font-medium px-5 py-2.5 rounded-full hover:bg-[#0C8A5F] transition-colors"
-              >
-                Réserver
-              </Link>
+              {disponibilite ? (
+                <Link
+                  to={`/services/${id}/reserver`}
+                  className="block mt-3 bg-[#0E9F6E] text-white text-sm font-medium px-5 py-2.5 rounded-full hover:bg-[#0C8A5F] transition-colors"
+                >
+                  Réserver
+                </Link>
+              ) : (
+                <span className="block mt-3 bg-[#F0F7F4] text-[#7A9C90] text-sm font-medium px-5 py-2.5 rounded-full cursor-not-allowed">
+                  Indisponible
+                </span>
+              )}
             </div>
           </div>
 
