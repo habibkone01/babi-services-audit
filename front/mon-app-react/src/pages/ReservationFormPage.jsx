@@ -79,7 +79,28 @@ export default function ReservationFormPage() {
     );
   }
 
-  const { nom_service, tarif, prestataire, categorie } = service;
+  const { nom_service, tarif, prestataire, categorie, disponibilite } = service;
+
+  if (!disponibilite) {
+    return (
+      <div className="min-h-screen flex flex-col bg-white">
+        <Navbar />
+        <main className="flex-1 max-w-3xl mx-auto px-6 py-16 w-full">
+          <p className="text-sm text-[#7A9C90] bg-[#F0F7F4] rounded-xl p-4">
+            Ce service n'est plus disponible actuellement.
+          </p>
+          <Link
+            to={`/services/${id}`}
+            className="inline-flex items-center gap-2 text-sm text-[#0E9F6E] mt-4"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Retour au profil
+          </Link>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   if (success) {
     return (

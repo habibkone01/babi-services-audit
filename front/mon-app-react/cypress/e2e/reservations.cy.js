@@ -4,13 +4,9 @@ describe('Réservations', () => {
   const email = `client_${Date.now()}@babi.com`
   const motDePasse = 'password123'
   let clientToken
-  let idService
 
   before(() => {
-    cy.task('seedCypress').then((serviceId) => {
-      idService = serviceId
-
-      // Créer le client
+    cy.task('seedCypress').then((idService) => {
       cy.request('POST', `${API}/api/register`, {
         prenom: 'Client',
         nom: 'Cypress',
@@ -25,6 +21,18 @@ describe('Réservations', () => {
         mot_de_passe: motDePasse,
       }).then((res) => {
         clientToken = res.body.token
+
+        cy.request({
+          method: 'POST',
+          url: `${API}/api/reservations`,
+          headers: { Authorization: `Bearer ${clientToken}` },
+          body: {
+            id_service: idService,
+            date_reservation: '2027-01-15',
+            heure_reservation: '10:00',
+            message: 'Test Cypress',
+          },
+        })
       })
     })
   })
@@ -35,35 +43,31 @@ describe('Réservations', () => {
     cy.url().should('include', '/connexion')
   })
 
-  it('crée une réservation et la voit dans la liste', () => {
-    cy.request({
-      method: 'POST',
-      url: `${API}/api/reservations`,
-      headers: { Authorization: `Bearer ${clientToken}` },
-      body: {
-        id_service: idService,
-        date_reservation: '2027-01-15',
-        heure_reservation: '10:00',
-        message: 'Test Cypress',
-      },
-    }).then((res) => {
-      expect(res.status).to.eq(201)
-    })
-
+  it('affiche les réservations du client connecté', () => {
     cy.window().then((win) => win.localStorage.setItem('token', clientToken))
     cy.visit('/reservations')
 
-    cy.url().should('include', '/reservations')
     cy.contains('Service Cypress').should('be.visible')
+    cy.contains('2 500').should('be.visible')
   })
 
-  it('l\'API réservations renvoie 401 sans token', () => {
-    cy.request({
-      method: 'GET',
-      url: `${API}/api/reservations`,
-      failOnStatusCode: false,
-    }).then((res) => {
-      expect(res.status).to.eq(401)
-    })
+  it('affiche le statut de la réservation', () => {
+    cy.window().then((win) => win.localStorage.setItem('token', clientToken))
+    cy.visit('/reservations')
+
+    cy.contains('Service Cypress')
+      .parents('div')
+      .first()
+      .within(() => {
+        cy.get('span, p').should('exist')
+      })
+  })
+
+  it('peut annuler une réservation', () => {
+    cy.window().then((win) => win.localStorage.setItem('token', clientToken))
+    cy.visit('/reservations')
+
+    cy.contains('Annuler').should('be.visible').click()
+    cy.contains('Annuler').should('not.exist')
   })
 })

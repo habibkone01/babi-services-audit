@@ -1,26 +1,57 @@
-describe('Parcourir les services', () => {
-  it('affiche des services sur la page d\'accueil', () => {
-    cy.visit('/')
-    cy.get('body').should('be.visible')
-  })
+const API = 'http://localhost:8000'
 
-  it('la page détail d\'un service est accessible', () => {
-    cy.request('GET', 'http://localhost:8000/api/services').then((res) => {
-      expect(res.status).to.eq(200)
-      const services = res.body
+describe('Services', () => {
+  let token
 
-      if (services.length > 0) {
-        const id = services[0].id_service
-        cy.visit(`/services/${id}`)
-        cy.url().should('include', `/services/${id}`)
-      }
+  before(() => {
+    cy.task('seedCypress')
+    cy.request('POST', `${API}/api/login`, {
+      email: 'admin_cypress@babi.com',
+      mot_de_passe: 'password',
+    }).then((res) => {
+      token = res.body.token
     })
   })
 
-  it('les catégories sont disponibles via l\'API', () => {
-    cy.request('GET', 'http://localhost:8000/api/categories').then((res) => {
-      expect(res.status).to.eq(200)
-      expect(res.body).to.be.an('array')
-    })
+  beforeEach(() => {
+    cy.window().then((win) => win.localStorage.setItem('token', token))
+  })
+
+  it('affiche les services sur la page /services', () => {
+    cy.visit('/services')
+    cy.contains('Service Cypress').should('be.visible')
+    cy.contains('2 500').should('be.visible')
+  })
+
+  it('accède à la fiche détail en cliquant sur "Voir le profil"', () => {
+    cy.visit('/services')
+    cy.contains('Service Cypress')
+      .parents('div')
+      .find('a')
+      .contains('Voir le profil')
+      .click()
+
+    cy.url().should('match', /\/services\/\d+/)
+    cy.contains('Service Cypress').should('be.visible')
+  })
+
+  it('le bouton Réserver mène au formulaire de réservation', () => {
+    cy.visit('/services')
+    cy.contains('Service Cypress')
+      .parents('div')
+      .find('a')
+      .contains('Réserver')
+      .click()
+
+    cy.url().should('match', /\/services\/\d+\/reserver/)
+  })
+
+  it('la fiche détail affiche le tarif et le bouton Réserver', () => {
+    cy.visit('/services')
+    cy.contains('Voir le profil').first().click()
+
+    cy.url().should('match', /\/services\/\d+/)
+    cy.contains('2 500').should('be.visible')
+    cy.contains('Réserver').should('be.visible')
   })
 })

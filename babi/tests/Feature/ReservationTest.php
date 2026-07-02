@@ -129,6 +129,71 @@ class ReservationTest extends TestCase
         ])->assertOk()->assertJsonFragment(['statut' => 'terminee']);
     }
 
+    public function test_creation_echoue_si_le_creneau_est_deja_reserve(): void
+    {
+        $service = Service::factory()->create();
+        Reservation::factory()->create([
+            'id_service'        => $service->id_service,
+            'date_reservation'  => '2026-07-10',
+            'heure_reservation' => '10:00',
+            'statut'            => 'confirmee',
+        ]);
+
+        Sanctum::actingAs(Utilisateur::factory()->create());
+
+        $this->postJson('/api/reservations', [
+            'date_reservation'  => '2026-07-10',
+            'heure_reservation' => '10:00',
+            'id_service'        => $service->id_service,
+        ])->assertStatus(422)->assertJsonValidationErrors('id_service');
+    }
+
+    public function test_creation_echoue_si_le_service_nest_pas_disponible(): void
+    {
+        $service = Service::factory()->create(['disponibilite' => false]);
+        Sanctum::actingAs(Utilisateur::factory()->create());
+
+        $this->postJson('/api/reservations', [
+            'date_reservation'  => '2026-07-10',
+            'heure_reservation' => '10:00',
+            'id_service'        => $service->id_service,
+        ])->assertStatus(422)->assertJsonValidationErrors('id_service');
+    }
+
+    public function test_creation_reussit_si_le_creneau_precedent_est_annule(): void
+    {
+        $service = Service::factory()->create();
+        Reservation::factory()->create([
+            'id_service'        => $service->id_service,
+            'date_reservation'  => '2026-07-10',
+            'heure_reservation' => '10:00',
+            'statut'            => 'annulee',
+        ]);
+
+        Sanctum::actingAs(Utilisateur::factory()->create());
+
+        $this->postJson('/api/reservations', [
+            'date_reservation'  => '2026-07-10',
+            'heure_reservation' => '10:00',
+            'id_service'        => $service->id_service,
+        ])->assertStatus(201);
+    }
+
+    public function test_update_ne_permet_pas_de_reassigner_la_reservation_a_un_autre_utilisateur(): void
+    {
+        $proprietaire = Utilisateur::factory()->create();
+        $autre = Utilisateur::factory()->create();
+        $reservation = Reservation::factory()->create(['id_utilisateur' => $proprietaire->id_utilisateur]);
+
+        Sanctum::actingAs($proprietaire);
+
+        $this->putJson("/api/reservations/{$reservation->id_reservation}", [
+            'id_utilisateur' => $autre->id_utilisateur,
+        ])->assertOk();
+
+        $this->assertSame($proprietaire->id_utilisateur, $reservation->fresh()->id_utilisateur);
+    }
+
     public function test_destroy_refuse_si_on_nest_pas_le_proprietaire(): void
     {
         $proprietaire = Utilisateur::factory()->create();

@@ -68,7 +68,7 @@ class ReservationController extends Controller
         }
 
         abort_if($reservation->id_utilisateur !== auth()->id(), 403);
-        $reservation->update($request->validated());
+        $reservation->update($request->safe()->except('id_utilisateur'));
         return response()->json($reservation);
     }
 

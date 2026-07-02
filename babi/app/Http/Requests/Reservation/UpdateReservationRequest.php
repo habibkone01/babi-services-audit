@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests\Reservation;
 
+use App\Models\Reservation;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Validator;
 
 class UpdateReservationRequest extends FormRequest
 {
@@ -29,5 +31,30 @@ class UpdateReservationRequest extends FormRequest
             'id_utilisateur'    => 'sometimes|exists:utilisateurs,id_utilisateur',
             'id_service'        => 'sometimes|exists:services,id_service',
         ];
+    }
+
+    public function withValidator(Validator $validator): void
+    {
+        $validator->after(function (Validator $validator) {
+            if (!$this->hasAny(['date_reservation', 'heure_reservation', 'id_service'])) {
+                return;
+            }
+
+            $reservation = Reservation::find($this->route('reservation'));
+            if (!$reservation) {
+                return;
+            }
+
+            $creneauPris = Reservation::where('id_service', $this->input('id_service', $reservation->id_service))
+                ->where('date_reservation', $this->input('date_reservation', $reservation->date_reservation))
+                ->where('heure_reservation', $this->input('heure_reservation', $reservation->heure_reservation))
+                ->where('id_reservation', '!=', $reservation->id_reservation)
+                ->whereNotIn('statut', ['annulee'])
+                ->exists();
+
+            if ($creneauPris) {
+                $validator->errors()->add('id_service', "Ce créneau n'est plus disponible pour ce service.");
+            }
+        });
     }
 }
