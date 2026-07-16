@@ -1,10 +1,13 @@
-FROM php:8.4-cli
+FROM php:8.4-fpm
 
+# Installation des dépendances système + Nginx (plus de Supervisor)
 RUN apt-get update && apt-get install -y \
         git \
         unzip \
         libzip-dev \
         libpng-dev \
+        nginx \
+        gettext-base \
     && docker-php-ext-install pdo_mysql zip \
     && rm -rf /var/lib/apt/lists/*
 
@@ -18,6 +21,23 @@ RUN composer install --no-interaction --no-scripts --no-autoloader --no-dev --pr
 COPY . .
 RUN composer dump-autoload --optimize --no-dev
 
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
+    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+
+# Nginx + PHP-FPM : plus que 2 fichiers de config externes
+COPY docker/nginx.conf /etc/nginx/templates/default.conf.template
+COPY docker/www.conf /usr/local/etc/php-fpm.d/www.conf
+
 EXPOSE 8000
 
-CMD ["sh", "-c", "php artisan migrate --force && php artisan config:cache && php artisan route:cache && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"]
+# Migrations + cache, puis PHP-FPM en arrière-plan et Nginx au premier plan.
+# `exec` sur nginx : c'est lui le processus PID 1 que Docker surveille.
+CMD sh -c ' \
+    export PORT="${PORT:-8000}" && \
+    envsubst "\$PORT" < /etc/nginx/templates/default.conf.template > /etc/nginx/sites-enabled/default && \
+    php artisan migrate --force && \
+    php artisan config:cache && \
+    php artisan route:cache && \
+    php-fpm -D && \
+    exec nginx -g "daemon off;" \
+    '

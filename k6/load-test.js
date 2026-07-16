@@ -13,9 +13,10 @@ export const options = {
     },
 };
 
-const BASE_URL = __ENV.BASE_URL || 'http://localhost:8000';
+const BASE_URL = 'https://babi-services-audit-production.up.railway.app';
 
 export default function () {
+    // PERF-01 — GET /api/services (public, sans pagination)
     const services = http.get(`${BASE_URL}/api/services`);
     check(services, {
         'services: status 200': (r) => r.status === 200,
@@ -24,6 +25,7 @@ export default function () {
 
     sleep(0.5);
 
+    // Login admin — nécessaire pour les 2 endpoints suivants
     const login = http.post(
         `${BASE_URL}/api/login`,
         JSON.stringify({ email: 'admin@babiservices.ci', mot_de_passe: 'password' }),
@@ -33,6 +35,31 @@ export default function () {
         'login: status 200': (r) => r.status === 200,
         'login: token présent': (r) => JSON.parse(r.body).token !== undefined,
         'login: réponse < 500ms': (r) => r.timings.duration < 500,
+    });
+
+    sleep(0.5);
+
+    // Récupération du token pour les appels authentifiés
+    let token = null;
+    if (login.status === 200) {
+        token = JSON.parse(login.body).token;
+    }
+    const authHeaders = { headers: { Authorization: `Bearer ${token}` } };
+
+    // PERF-02 — GET /api/admin/missions (sans pagination ni filtre de date)
+    const missions = http.get(`${BASE_URL}/api/admin/missions`, authHeaders);
+    check(missions, {
+        'admin/missions: status 200': (r) => r.status === 200,
+        'admin/missions: réponse < 500ms': (r) => r.timings.duration < 500,
+    });
+
+    sleep(0.5);
+
+    // PERF-03 — GET /api/admin/utilisateurs (sans pagination, withCount corrélé)
+    const utilisateurs = http.get(`${BASE_URL}/api/admin/utilisateurs`, authHeaders);
+    check(utilisateurs, {
+        'admin/utilisateurs: status 200': (r) => r.status === 200,
+        'admin/utilisateurs: réponse < 500ms': (r) => r.timings.duration < 500,
     });
 
     sleep(1);
