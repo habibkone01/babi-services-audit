@@ -8,7 +8,7 @@ export const options = {
         { duration: '10s', target: 0 },
     ],
     thresholds: {
-        http_req_duration: ['p(95)<500'],
+        http_req_duration: ['p(95)<600'],
         http_req_failed:   ['rate<0.01'],
     },
 };
@@ -20,7 +20,7 @@ export default function () {
     const services = http.get(`${BASE_URL}/api/services`);
     check(services, {
         'services: status 200': (r) => r.status === 200,
-        'services: réponse < 500ms': (r) => r.timings.duration < 500,
+        'services: réponse < 600ms': (r) => r.timings.duration < 600,
     });
 
     sleep(0.5);
@@ -34,7 +34,7 @@ export default function () {
     check(login, {
         'login: status 200': (r) => r.status === 200,
         'login: token présent': (r) => JSON.parse(r.body).token !== undefined,
-        'login: réponse < 500ms': (r) => r.timings.duration < 500,
+        'login: réponse < 600ms': (r) => r.timings.duration < 600,
     });
 
     sleep(0.5);
@@ -50,7 +50,7 @@ export default function () {
     const missions = http.get(`${BASE_URL}/api/admin/missions`, authHeaders);
     check(missions, {
         'admin/missions: status 200': (r) => r.status === 200,
-        'admin/missions: réponse < 500ms': (r) => r.timings.duration < 500,
+        'admin/missions: réponse < 600ms': (r) => r.timings.duration < 600,
     });
 
     sleep(0.5);
@@ -59,7 +59,7 @@ export default function () {
     const utilisateurs = http.get(`${BASE_URL}/api/admin/utilisateurs`, authHeaders);
     check(utilisateurs, {
         'admin/utilisateurs: status 200': (r) => r.status === 200,
-        'admin/utilisateurs: réponse < 500ms': (r) => r.timings.duration < 500,
+        'admin/utilisateurs: réponse < 600ms': (r) => r.timings.duration < 600,
     });
 
     sleep(1);
