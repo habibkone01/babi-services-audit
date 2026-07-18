@@ -27,7 +27,7 @@ class UpdateReservationRequest extends FormRequest
         return [
             'date_reservation'  => 'sometimes|date',
             'heure_reservation' => 'sometimes|date_format:H:i',
-            'statut'            => 'sometimes|in:en_attente,confirmee,annulee,terminee',
+            'statut'            => 'sometimes|in:confirmee,annulee,terminee',
             'id_utilisateur'    => 'sometimes|exists:utilisateurs,id_utilisateur',
             'id_service'        => 'sometimes|exists:services,id_service',
         ];
