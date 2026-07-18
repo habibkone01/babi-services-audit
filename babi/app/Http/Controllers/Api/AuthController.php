@@ -9,6 +9,7 @@ use App\Models\Utilisateur;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -34,6 +35,12 @@ class AuthController extends Controller
         $utilisateur = Utilisateur::where('email', $request->email)->first();
 
         if (!$utilisateur || !Hash::check($request->mot_de_passe, $utilisateur->mot_de_passe)) {
+            Log::error('Tentative de connexion échouée', [
+                'email' => $request->email,
+                'ip'    => $request->ip(),
+            ]);
+            $eventId = \Sentry\captureMessage('Tentative de connexion échouée : ' . $request->email);
+            \Sentry\State\HubAdapter::getInstance()->getClient()?->flush(2);
             return response()->json(['message' => 'Identifiants incorrects'], 401);
         }
 
@@ -43,7 +50,7 @@ class AuthController extends Controller
     }
 
     public function logout(): JsonResponse
-   {
+    {
         auth('sanctum')->user()->tokens()->delete();
         return response()->json(['message' => 'Déconnecté avec succès']);
     }
