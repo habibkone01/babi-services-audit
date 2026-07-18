@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('nom_categorie', 100);
             $table->text('description')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
