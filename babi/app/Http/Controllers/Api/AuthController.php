@@ -5,9 +5,10 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Requests\Auth\UpdateProfilRequest;
+use App\Http\Requests\Auth\ChangePasswordRequest;
 use App\Models\Utilisateur;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
@@ -43,7 +44,7 @@ class AuthController extends Controller
     }
 
     public function logout(): JsonResponse
-   {
+    {
         auth('sanctum')->user()->tokens()->delete();
         return response()->json(['message' => 'Déconnecté avec succès']);
     }
@@ -53,31 +54,16 @@ class AuthController extends Controller
         return response()->json(auth()->user());
     }
 
-    public function updateProfil(Request $request): JsonResponse
+    public function updateProfil(UpdateProfilRequest $request): JsonResponse
     {
         $utilisateur = auth()->user();
-
-        $data = $request->validate([
-            'nom'       => 'required|string|max:100',
-            'prenom'    => 'required|string|max:100',
-            'email'     => 'required|email|unique:utilisateurs,email,' . $utilisateur->id_utilisateur . ',id_utilisateur',
-            'telephone' => 'nullable|string|max:20',
-            'adresse'   => 'nullable|string|max:255',
-        ]);
-
-        $utilisateur->update($data);
-
+        $utilisateur->update($request->validated());
         return response()->json(['message' => 'Profil mis à jour', 'user' => $utilisateur->fresh()]);
     }
 
-    public function changePassword(Request $request): JsonResponse
+    public function changePassword(ChangePasswordRequest $request): JsonResponse
     {
         $utilisateur = auth()->user();
-
-        $request->validate([
-            'ancien_mot_de_passe'    => 'required|string',
-            'nouveau_mot_de_passe'   => 'required|string|min:8|confirmed',
-        ]);
 
         if (!Hash::check($request->ancien_mot_de_passe, $utilisateur->mot_de_passe)) {
             return response()->json(['message' => 'Ancien mot de passe incorrect'], 422);
