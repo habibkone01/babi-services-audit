@@ -38,7 +38,7 @@ class PerformanceSeeder extends Seeder
             ->sequence(fn ($sequence) => [
                 'id_utilisateur' => $utilisateurs->random()->id_utilisateur,
                 'id_service'     => $services->random()->id_service,
-                'statut'         => collect(['confirmee', 'terminee', 'annulee', 'en_attente'])->random(),
+                'statut'         => collect(['confirmee', 'terminee', 'annulee'])->random(),
             ])
             ->create();
 

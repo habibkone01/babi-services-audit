@@ -13,12 +13,13 @@ class PrestataireFactory extends Factory
 {
     protected $model = Prestataire::class;
 
+
     public function definition(): array
     {
         return [
             'nom' => fake()->lastName(),
             'prenom' => fake()->firstName(),
-            'email' => fake()->unique()->safeEmail(),
+            'email' => fake()->unique()->safeEmail() . '.' . uniqid(),
             'telephone' => fake()->numerify('07########'),
             'localisation' => fake()->city(),
             'note_moyenne' => 0,

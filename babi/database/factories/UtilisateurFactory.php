@@ -20,7 +20,7 @@ class UtilisateurFactory extends Factory
         return [
             'nom' => fake()->lastName(),
             'prenom' => fake()->firstName(),
-            'email' => fake()->unique()->safeEmail(),
+            'email' => fake()->unique()->safeEmail() . '.' . uniqid(),
             'mot_de_passe' => static::$password ??= Hash::make('password'),
             'telephone' => fake()->numerify('07########'),
             'adresse' => fake()->city(),
