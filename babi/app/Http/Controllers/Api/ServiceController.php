@@ -74,7 +74,7 @@ class ServiceController extends Controller
         }
 
         $service->update($data);
-        return response()->json($service);
+        return response()->json($service->load(['prestataire', 'categorie']));
     }
 
     /**
