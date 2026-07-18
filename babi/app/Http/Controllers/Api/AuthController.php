@@ -24,7 +24,7 @@ class AuthController extends Controller
             'role'         => 'client',
         ]);
 
-        $token = $utilisateur->createToken('auth_token')->plainTextToken;
+        $token = $utilisateur->createToken('auth_token', ['*'], now()->addMinutes(config('sanctum.expiration', 1440)))->plainTextToken;
 
         return response()->json(['user' => $utilisateur, 'token' => $token], 201);
     }
@@ -37,7 +37,7 @@ class AuthController extends Controller
             return response()->json(['message' => 'Identifiants incorrects'], 401);
         }
 
-        $token = $utilisateur->createToken('auth_token')->plainTextToken;
+        $token = $utilisateur->createToken('auth_token', ['*'], now()->addMinutes(config('sanctum.expiration', 1440)))->plainTextToken;
 
         return response()->json(['user' => $utilisateur, 'token' => $token]);
     }
