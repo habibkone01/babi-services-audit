@@ -5,7 +5,8 @@ namespace App\Http\Requests\Reservation;
 use App\Models\Reservation;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Validator;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class UpdateReservationRequest extends FormRequest
 {
@@ -33,6 +34,17 @@ class UpdateReservationRequest extends FormRequest
         ];
     }
 
+    public function messages(): array
+    {
+        return [
+            'date_reservation.date'         => 'La date de réservation doit être une date valide.',
+            'heure_reservation.date_format' => 'L\'heure de réservation doit être au format HH:MM.',
+            'statut.in'                     => 'Le statut doit être confirmee, annulee ou terminee.',
+            'id_utilisateur.exists'         => 'L\'utilisateur sélectionné n\'existe pas.',
+            'id_service.exists'             => 'Le service sélectionné n\'existe pas.',
+        ];
+    }
+
     public function withValidator(Validator $validator): void
     {
         $validator->after(function (Validator $validator) {
@@ -56,5 +68,13 @@ class UpdateReservationRequest extends FormRequest
                 $validator->errors()->add('id_service', "Ce créneau n'est plus disponible pour ce service.");
             }
         });
+    }
+
+    protected function failedValidation(Validator $validator): void
+    {
+        throw new HttpResponseException(response()->json([
+            'success' => false,
+            'errors'  => $validator->errors(),
+        ], 422));
     }
 }

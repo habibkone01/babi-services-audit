@@ -4,6 +4,8 @@ namespace App\Http\Requests\Avis;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class UpdateAvisRequest extends FormRequest
 {
@@ -27,5 +29,24 @@ class UpdateAvisRequest extends FormRequest
             'commentaire' => 'nullable|string',
             'date_avis'   => 'sometimes|date',
         ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'note.integer'       => 'La note doit être un entier.',
+            'note.min'           => 'La note doit être au minimum 1.',
+            'note.max'           => 'La note doit être au maximum 5.',
+            'commentaire.string' => 'Le commentaire doit être une chaîne de caractères.',
+            'date_avis.date'     => 'La date de l\'avis doit être une date valide.',
+        ];
+    }
+
+    protected function failedValidation(Validator $validator): void
+    {
+        throw new HttpResponseException(response()->json([
+            'success' => false,
+            'errors'  => $validator->errors(),
+        ], 422));
     }
 }

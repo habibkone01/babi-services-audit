@@ -6,6 +6,8 @@ use App\Models\Reservation;
 use App\Models\Service;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class StoreReservationRequest extends FormRequest
 {
@@ -48,5 +50,25 @@ class StoreReservationRequest extends FormRequest
                 },
             ],
         ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'date_reservation.required'  => 'La date de réservation est obligatoire.',
+            'date_reservation.date'      => 'La date de réservation doit être une date valide.',
+            'heure_reservation.required' => 'L\'heure de réservation est obligatoire.',
+            'heure_reservation.date_format' => 'L\'heure de réservation doit être au format HH:MM.',
+            'id_service.required'        => 'Le service est obligatoire.',
+            'id_service.exists'          => 'Le service sélectionné n\'existe pas.',
+        ];
+    }
+
+    protected function failedValidation(Validator $validator): void
+    {
+        throw new HttpResponseException(response()->json([
+            'success' => false,
+            'errors'  => $validator->errors(),
+        ], 422));
     }
 }
