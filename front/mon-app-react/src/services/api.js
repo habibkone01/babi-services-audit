@@ -49,15 +49,15 @@ export const apiGetMe = async () => {
   return { ok: res.ok, data: await res.json() }
 }
 
-export const apiGetServices = async () => {
-  const res = await fetch(`${API_URL}/api/services`, {
+export const apiGetServices = async (page = 1) => {
+  const res = await fetch(`${API_URL}/api/services?page=${page}`, {
     headers: { Accept: 'application/json' },
   })
   return { ok: res.ok, data: await res.json() }
 }
 
-export const apiGetReservations = async () => {
-  const res = await fetch(`${API_URL}/api/reservations`, {
+export const apiGetReservations = async (page = 1) => {
+  const res = await fetch(`${API_URL}/api/reservations?page=${page}`, {
     headers: getAuthHeaders(),
   })
   return { ok: res.ok, data: await res.json() }
@@ -118,8 +118,15 @@ export const apiGetCategories = async () => {
   return { ok: res.ok, data: await res.json() }
 }
 
-export const apiGetPrestataires = async () => {
-  const res = await fetch(`${API_URL}/api/prestataires`, {
+export const apiGetPrestataires = async (page = 1) => {
+  const res = await fetch(`${API_URL}/api/prestataires?page=${page}`, {
+    headers: { Accept: 'application/json' },
+  })
+  return { ok: res.ok, data: await res.json() }
+}
+
+export const apiGetAllPrestataires = async () => {
+  const res = await fetch(`${API_URL}/api/prestataires/all`, {
     headers: { Accept: 'application/json' },
   })
   return { ok: res.ok, data: await res.json() }
@@ -214,8 +221,8 @@ export const apiDeleteService = async (id) => {
   return { ok: res.ok }
 }
 
-export const apiGetServiceAvis = async (id) => {
-  const res = await fetch(`${API_URL}/api/services/${id}/avis`, {
+export const apiGetServiceAvis = async (id, page = 1) => {
+  const res = await fetch(`${API_URL}/api/services/${id}/avis?page=${page}`, {
     headers: { Accept: 'application/json' },
   })
   return { ok: res.ok, data: await res.json() }
@@ -294,7 +301,8 @@ export const apiGetAllServices = async () => {
     headers: { Accept: 'application/json' },
   })
   if (!res.ok) throw new Error(`Erreur API ${res.status}`)
-  return res.json()
+  const json = await res.json()
+  return Array.isArray(json) ? json : json.data ?? []
 }
 
 export const apiGetServiceById = async (id) => {

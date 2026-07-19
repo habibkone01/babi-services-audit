@@ -15,7 +15,15 @@ class PrestaireController extends Controller
      */
     public function index()
     {
-        return response()->json(Prestataire::with(['services', 'categorie'])->get());
+        return response()->json(Prestataire::with(['services', 'categorie'])->paginate(20));
+    }
+
+    /**
+     * Retourne tous les prestataires sans pagination (utilisé dans les selects admin).
+     */
+    public function all()
+    {
+        return response()->json(Prestataire::with(['categorie'])->get());
     }
 
     /**

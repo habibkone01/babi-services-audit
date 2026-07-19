@@ -8,7 +8,6 @@ import { apiGetReservations, apiUpdateReservation, apiCreateAvis } from "../serv
 
 const FILTERS = [
   { label: "Toutes", value: "toutes" },
-  { label: "En attente", value: "en_attente" },
   { label: "Confirmées", value: "confirmee" },
   { label: "Terminées", value: "terminee" },
   { label: "Annulées", value: "annulee" },
@@ -19,14 +18,22 @@ export default function MesReservationsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeFilter, setActiveFilter] = useState("toutes");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [lastPage, setLastPage] = useState(1);
 
   useEffect(() => {
     let active = true;
-    apiGetReservations()
+    setLoading(true);
+    apiGetReservations(currentPage)
       .then((res) => {
         if (!active) return;
-        if (res.ok) setReservations(res.data);
-        else setError(res.data);
+        if (res.ok) {
+          const data = res.data;
+          setReservations(Array.isArray(data) ? data : data.data ?? []);
+          if (data.last_page) setLastPage(data.last_page);
+        } else {
+          setError(res.data);
+        }
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -34,7 +41,7 @@ export default function MesReservationsPage() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [currentPage]);
 
   const filtered = useMemo(() => {
     if (activeFilter === "toutes") return reservations;
@@ -44,7 +51,6 @@ export default function MesReservationsPage() {
   async function handleCancel(id) {
     const confirmed = window.confirm("Annuler cette réservation ?");
     if (!confirmed) return;
-
     const res = await apiUpdateReservation(id, { statut: "annulee" });
     if (!res.ok) {
       alert("Impossible d'annuler la réservation pour le moment.");
@@ -58,7 +64,6 @@ export default function MesReservationsPage() {
   async function handleMarkTerminee(id) {
     const confirmed = window.confirm("Confirmer que cette prestation est terminée ?");
     if (!confirmed) return;
-
     const res = await apiUpdateReservation(id, { statut: "terminee" });
     if (!res.ok) {
       alert("Impossible de mettre à jour la réservation pour le moment.");
@@ -72,7 +77,6 @@ export default function MesReservationsPage() {
   async function handleRate(id, payload) {
     const res = await apiCreateAvis({ ...payload, id_reservation: id });
     if (!res.ok) return false;
-
     setReservations((prev) =>
       prev.map((r) => (r.id_reservation === id ? { ...r, avis: res.data } : r))
     );
@@ -119,10 +123,7 @@ export default function MesReservationsPage() {
           {loading && (
             <div className="space-y-4">
               {Array.from({ length: 3 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="h-24 rounded-2xl bg-[#F0F7F4] animate-pulse"
-                />
+                <div key={i} className="h-24 rounded-2xl bg-[#F0F7F4] animate-pulse" />
               ))}
             </div>
           )}
@@ -158,6 +159,26 @@ export default function MesReservationsPage() {
                   onRate={handleRate}
                 />
               ))}
+            </div>
+          )}
+
+          {lastPage > 1 && (
+            <div className="flex justify-center gap-3 mt-8">
+              <button
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="px-4 py-2 rounded-full border border-[#DCEBE3] text-sm font-medium text-[#3D5A50] disabled:opacity-40"
+              >
+                Précédent
+              </button>
+              <span className="px-4 py-2 text-sm text-[#7A9C90]">{currentPage} / {lastPage}</span>
+              <button
+                onClick={() => setCurrentPage((p) => Math.min(lastPage, p + 1))}
+                disabled={currentPage === lastPage}
+                className="px-4 py-2 rounded-full border border-[#DCEBE3] text-sm font-medium text-[#3D5A50] disabled:opacity-40"
+              >
+                Suivant
+              </button>
             </div>
           )}
         </div>

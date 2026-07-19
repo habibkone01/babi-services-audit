@@ -54,6 +54,8 @@ function PrestatairesAdmin() {
   const [prestataires, setPrestataires] = useState([])
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [lastPage, setLastPage] = useState(1)
   const [modalOpen, setModalOpen] = useState(false)
   const [editingId, setEditingId] = useState(null)
   const [form, setForm] = useState(emptyForm)
@@ -61,12 +63,16 @@ function PrestatairesAdmin() {
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
-    Promise.all([apiGetPrestataires(), apiGetCategories()]).then(([prestatairesRes, categoriesRes]) => {
-      if (prestatairesRes.ok) setPrestataires(prestatairesRes.data)
+    Promise.all([apiGetPrestataires(currentPage), apiGetCategories()]).then(([prestatairesRes, categoriesRes]) => {
+      if (prestatairesRes.ok) {
+        const data = prestatairesRes.data
+        setPrestataires(Array.isArray(data) ? data : data.data ?? [])
+        if (data.last_page) setLastPage(data.last_page)
+      }
       if (categoriesRes.ok) setCategories(categoriesRes.data)
       setLoading(false)
     })
-  }, [])
+  }, [currentPage])
 
   function openCreateModal() {
     setEditingId(null)
@@ -205,6 +211,26 @@ function PrestatairesAdmin() {
             </tbody>
           </table>
         </div>
+
+        {lastPage > 1 && (
+          <div className="flex justify-center gap-3 mt-6">
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="px-4 py-2 rounded-full border border-gray-200 text-sm font-semibold disabled:opacity-40"
+            >
+              Précédent
+            </button>
+            <span className="px-4 py-2 text-sm text-gray-500">{currentPage} / {lastPage}</span>
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(lastPage, p + 1))}
+              disabled={currentPage === lastPage}
+              className="px-4 py-2 rounded-full border border-gray-200 text-sm font-semibold disabled:opacity-40"
+            >
+              Suivant
+            </button>
+          </div>
+        )}
       </div>
 
       {modalOpen && (
@@ -222,71 +248,38 @@ function PrestatairesAdmin() {
               <div className="flex gap-4">
                 <div className="flex-1">
                   <label className="block text-sm font-semibold text-babi-dark mb-1.5">Prénom</label>
-                  <input
-                    type="text"
-                    name="prenom"
-                    value={form.prenom}
-                    onChange={handleChange}
-                    required
-                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 outline-none focus:border-babi-green transition-colors"
-                  />
+                  <input type="text" name="prenom" value={form.prenom} onChange={handleChange} required
+                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 outline-none focus:border-babi-green transition-colors" />
                 </div>
                 <div className="flex-1">
                   <label className="block text-sm font-semibold text-babi-dark mb-1.5">Nom</label>
-                  <input
-                    type="text"
-                    name="nom"
-                    value={form.nom}
-                    onChange={handleChange}
-                    required
-                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 outline-none focus:border-babi-green transition-colors"
-                  />
+                  <input type="text" name="nom" value={form.nom} onChange={handleChange} required
+                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 outline-none focus:border-babi-green transition-colors" />
                 </div>
               </div>
 
               <div>
                 <label className="block text-sm font-semibold text-babi-dark mb-1.5">Email</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={form.email}
-                  onChange={handleChange}
-                  required
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 outline-none focus:border-babi-green transition-colors"
-                />
+                <input type="email" name="email" value={form.email} onChange={handleChange} required
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 outline-none focus:border-babi-green transition-colors" />
               </div>
 
               <div>
                 <label className="block text-sm font-semibold text-babi-dark mb-1.5">Téléphone</label>
-                <input
-                  type="tel"
-                  name="telephone"
-                  value={form.telephone}
-                  onChange={handleChange}
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 outline-none focus:border-babi-green transition-colors"
-                />
+                <input type="tel" name="telephone" value={form.telephone} onChange={handleChange}
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 outline-none focus:border-babi-green transition-colors" />
               </div>
 
               <div>
                 <label className="block text-sm font-semibold text-babi-dark mb-1.5">Quartier</label>
-                <input
-                  type="text"
-                  name="localisation"
-                  value={form.localisation}
-                  onChange={handleChange}
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 outline-none focus:border-babi-green transition-colors"
-                />
+                <input type="text" name="localisation" value={form.localisation} onChange={handleChange}
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 outline-none focus:border-babi-green transition-colors" />
               </div>
 
               <div>
                 <label className="block text-sm font-semibold text-babi-dark mb-1.5">Catégorie</label>
-                <select
-                  name="id_categorie"
-                  value={form.id_categorie}
-                  onChange={handleChange}
-                  required
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 outline-none focus:border-babi-green transition-colors bg-white"
-                >
+                <select name="id_categorie" value={form.id_categorie} onChange={handleChange} required
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 outline-none focus:border-babi-green transition-colors bg-white">
                   <option value="" disabled>Choisir une catégorie</option>
                   {categories.map((categorie) => (
                     <option key={categorie.id_categorie} value={categorie.id_categorie}>
@@ -297,18 +290,12 @@ function PrestatairesAdmin() {
               </div>
 
               <div className="flex items-center gap-3 mt-2">
-                <button
-                  type="button"
-                  onClick={() => setModalOpen(false)}
-                  className="flex-1 border border-gray-200 text-babi-dark font-semibold py-3 rounded-xl hover:border-gray-300 transition-colors"
-                >
+                <button type="button" onClick={() => setModalOpen(false)}
+                  className="flex-1 border border-gray-200 text-babi-dark font-semibold py-3 rounded-xl hover:border-gray-300 transition-colors">
                   Annuler
                 </button>
-                <button
-                  type="submit"
-                  disabled={saving}
-                  className="flex-1 bg-babi-green text-white font-semibold py-3 rounded-xl hover:-translate-y-0.5 hover:shadow-lg transition-all disabled:opacity-60 disabled:hover:-translate-y-0"
-                >
+                <button type="submit" disabled={saving}
+                  className="flex-1 bg-babi-green text-white font-semibold py-3 rounded-xl hover:-translate-y-0.5 hover:shadow-lg transition-all disabled:opacity-60 disabled:hover:translate-y-0">
                   {saving ? 'Enregistrement...' : 'Enregistrer'}
                 </button>
               </div>

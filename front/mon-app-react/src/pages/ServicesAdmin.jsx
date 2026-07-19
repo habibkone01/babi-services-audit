@@ -3,7 +3,7 @@ import AdminLayout from '../components/AdminLayout'
 import {
   API_URL,
   apiGetServices,
-  apiGetPrestataires,
+  apiGetAllPrestataires,
   apiGetCategories,
   apiCreateService,
   apiUpdateService,
@@ -43,6 +43,8 @@ function ServicesAdmin() {
   const [prestataires, setPrestataires] = useState([])
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [lastPage, setLastPage] = useState(1)
   const [modalOpen, setModalOpen] = useState(false)
   const [editingId, setEditingId] = useState(null)
   const [form, setForm] = useState(emptyForm)
@@ -52,15 +54,19 @@ function ServicesAdmin() {
   const [photoPreview, setPhotoPreview] = useState('')
 
   useEffect(() => {
-    Promise.all([apiGetServices(), apiGetPrestataires(), apiGetCategories()]).then(
+    Promise.all([apiGetServices(currentPage), apiGetAllPrestataires(), apiGetCategories()]).then(
       ([servicesRes, prestatairesRes, categoriesRes]) => {
-        if (servicesRes.ok) setServices(servicesRes.data)
+        if (servicesRes.ok) {
+          const data = servicesRes.data
+          setServices(Array.isArray(data) ? data : data.data ?? [])
+          if (data.last_page) setLastPage(data.last_page)
+        }
         if (prestatairesRes.ok) setPrestataires(prestatairesRes.data)
         if (categoriesRes.ok) setCategories(categoriesRes.data)
         setLoading(false)
       }
     )
-  }, [])
+  }, [currentPage])
 
   function openCreateModal() {
     setEditingId(null)
@@ -217,6 +223,26 @@ function ServicesAdmin() {
             </tbody>
           </table>
         </div>
+
+        {lastPage > 1 && (
+          <div className="flex justify-center gap-3 mt-6">
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="px-4 py-2 rounded-full border border-gray-200 text-sm font-semibold disabled:opacity-40"
+            >
+              Précédent
+            </button>
+            <span className="px-4 py-2 text-sm text-gray-500">{currentPage} / {lastPage}</span>
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(lastPage, p + 1))}
+              disabled={currentPage === lastPage}
+              className="px-4 py-2 rounded-full border border-gray-200 text-sm font-semibold disabled:opacity-40"
+            >
+              Suivant
+            </button>
+          </div>
+        )}
       </div>
 
       {modalOpen && (
@@ -345,7 +371,7 @@ function ServicesAdmin() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="flex-1 bg-babi-green text-white font-semibold py-3 rounded-xl hover:-translate-y-0.5 hover:shadow-lg transition-all disabled:opacity-60 disabled:hover:-translate-y-0"
+                  className="flex-1 bg-babi-green text-white font-semibold py-3 rounded-xl hover:-translate-y-0.5 hover:shadow-lg transition-all disabled:opacity-60 disabled:hover:translate-y-0"
                 >
                   {saving ? 'Enregistrement...' : 'Enregistrer'}
                 </button>

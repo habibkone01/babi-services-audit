@@ -22,6 +22,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('avis/{id}/signaler', [AvisController::class, 'signaler']);
 });
 
+Route::get('prestataires/all', [PrestaireController::class, 'all']);
 Route::apiResource('prestataires', PrestaireController::class)->only(['index', 'show']);
 Route::post('prestataires/candidature', [PrestaireController::class, 'candidater']);
 Route::apiResource('categories', CategorieController::class)->only(['index', 'show']);

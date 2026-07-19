@@ -9,7 +9,10 @@ function BestPros() {
 
   useEffect(() => {
     apiGetServices().then((res) => {
-      if (res.ok) setServices(res.data.slice(0, 4))
+      if (res.ok) {
+        const data = Array.isArray(res.data) ? res.data : res.data.data ?? []
+        setServices(data.slice(0, 4))
+      }
       setLoading(false)
     })
   }, [])
@@ -40,11 +43,11 @@ function BestPros() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {loading
               ? Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className="h-[420px] rounded-3xl bg-emerald-50 animate-pulse"></div>
-                ))
+                <div key={i} className="h-[420px] rounded-3xl bg-emerald-50 animate-pulse"></div>
+              ))
               : services.map((service) => (
-                  <ServiceCard key={service.id_service} service={service} />
-                ))}
+                <ServiceCard key={service.id_service} service={service} />
+              ))}
           </div>
         )}
       </div>

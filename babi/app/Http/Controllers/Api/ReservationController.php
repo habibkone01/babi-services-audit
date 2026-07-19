@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Reservation;
 use App\Http\Requests\Reservation\StoreReservationRequest;
 use App\Http\Requests\Reservation\UpdateReservationRequest;
-use Illuminate\Http\Request;
 
 class ReservationController extends Controller
 {
@@ -19,7 +18,7 @@ class ReservationController extends Controller
             return response()->json(
                 Reservation::with(['utilisateur', 'service.prestataire', 'avis'])
                     ->orderByDesc('date_reservation')
-                    ->get()
+                    ->paginate(20)
             );
         }
 
@@ -27,7 +26,7 @@ class ReservationController extends Controller
             Reservation::with(['utilisateur', 'service.prestataire', 'avis'])
                 ->where('id_utilisateur', auth()->id())
                 ->orderByDesc('date_reservation')
-                ->get()
+                ->paginate(20)
         );
     }
 
@@ -36,7 +35,6 @@ class ReservationController extends Controller
      */
     public function store(StoreReservationRequest $request)
     {
-        
         $reservation = Reservation::create([
             ...$request->validated(),
             'id_utilisateur' => auth()->id(),

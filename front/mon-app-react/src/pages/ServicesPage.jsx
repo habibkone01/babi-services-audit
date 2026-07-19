@@ -6,7 +6,7 @@ import Footer from "../components/Footer";
 import SearchBar from "../components/services/SearchBar";
 import FilterSidebar from "../components/services/FilterSidebar";
 import ServiceGrid from "../components/services/ServiceGrid";
-import { apiGetAllServices } from "../services/api";
+import { apiGetServices } from "../services/api";
 
 const DEFAULT_FILTERS = {
   categorie: null,
@@ -22,6 +22,8 @@ export default function ServicesPage() {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [lastPage, setLastPage] = useState(1);
   const [search, setSearch] = useState(searchParams.get("search") ?? "");
   const [filters, setFilters] = useState(() => ({
     ...DEFAULT_FILTERS,
@@ -36,12 +38,21 @@ export default function ServicesPage() {
   useEffect(() => {
     let active = true;
     setLoading(true);
-    apiGetAllServices()
-      .then((data) => { if (active) setServices(Array.isArray(data) ? data : []) })
+    apiGetServices(currentPage)
+      .then((res) => {
+        if (!active) return;
+        if (res.ok) {
+          const data = Array.isArray(res.data) ? res.data : res.data.data ?? [];
+          setServices(data);
+          if (res.data.last_page) setLastPage(res.data.last_page);
+        } else {
+          setError(res.data);
+        }
+      })
       .catch((err) => { if (active) setError(err) })
       .finally(() => { if (active) setLoading(false) });
     return () => { active = false };
-  }, []);
+  }, [currentPage]);
 
   const filteredServices = useMemo(() => {
     const { categorie, quartier, noteMin, disponiblesSeulement } = filters;
@@ -78,7 +89,6 @@ export default function ServicesPage() {
 
       <main className="flex-1">
         <div className="max-w-[1280px] mx-auto px-6 md:px-10 py-10">
-          {/* Fil d'ariane */}
           <Link
             to="/"
             className="inline-flex items-center gap-2 text-sm text-[#7A9C90] hover:text-[#0E9F6E] mb-4"
@@ -106,7 +116,6 @@ export default function ServicesPage() {
             />
 
             <div className="flex-1">
-              {/* Compteur + Tri */}
               <div className="flex items-center justify-between mb-5">
                 <p className="text-sm text-[#3D5A50]">
                   <span className="font-semibold text-[#0B2B26]">
@@ -115,7 +124,6 @@ export default function ServicesPage() {
                   prestataire{filteredServices.length !== 1 ? "s" : ""} trouvé{filteredServices.length !== 1 ? "s" : ""}
                 </p>
 
-                {/* Dropdown tri */}
                 <div className="relative">
                   <button
                     onClick={() => setTriOpen(!triOpen)}
@@ -149,6 +157,26 @@ export default function ServicesPage() {
                 loading={loading}
                 error={error}
               />
+
+              {lastPage > 1 && (
+                <div className="flex justify-center gap-3 mt-8">
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    className="px-4 py-2 rounded-full border border-[#DCEBE3] text-sm font-medium text-[#3D5A50] disabled:opacity-40"
+                  >
+                    Précédent
+                  </button>
+                  <span className="px-4 py-2 text-sm text-[#7A9C90]">{currentPage} / {lastPage}</span>
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.min(lastPage, p + 1))}
+                    disabled={currentPage === lastPage}
+                    className="px-4 py-2 rounded-full border border-[#DCEBE3] text-sm font-medium text-[#3D5A50] disabled:opacity-40"
+                  >
+                    Suivant
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>

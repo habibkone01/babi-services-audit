@@ -18,7 +18,7 @@ class ServiceController extends Controller
      */
     public function index()
     {
-        return response()->json(Service::with(['prestataire', 'categorie'])->get());
+        return response()->json(Service::with(['prestataire', 'categorie'])->paginate(20));
     }
 
     /**

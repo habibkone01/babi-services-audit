@@ -19,7 +19,7 @@ class AvisController extends Controller
         return response()->json(
             Avis::with(['utilisateur', 'reservation'])
                 ->where('id_utilisateur', auth()->id())
-                ->get()
+                ->paginate(20)
         );
     }
 
@@ -33,7 +33,7 @@ class AvisController extends Controller
                 ->where('signale', false)
                 ->whereHas('reservation', fn ($q) => $q->where('id_service', $id_service))
                 ->orderByDesc('date_avis')
-                ->get()
+                ->paginate(10)
         );
     }
 
@@ -54,8 +54,7 @@ class AvisController extends Controller
     }
 
     /**
-     * Signale un avis comme inapproprié. Il est alors masqué de la liste publique
-     * et exclu du calcul de la note moyenne, en attente de modération.
+     * Signale un avis comme inapproprié.
      */
     public function signaler(SignalerAvisRequest $request, string $id)
     {

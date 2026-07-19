@@ -15,6 +15,8 @@ export default function ServiceDetailPage() {
 
   const [avisList, setAvisList] = useState([]);
   const [loadingAvis, setLoadingAvis] = useState(true);
+  const [avisPage, setAvisPage] = useState(1);
+  const [avisLastPage, setAvisLastPage] = useState(1);
 
   const [currentUserId, setCurrentUserId] = useState(null);
 
@@ -29,24 +31,26 @@ export default function ServiceDetailPage() {
       .finally(() => {
         if (active) setLoadingService(false);
       });
-    return () => {
-      active = false;
-    };
+    return () => { active = false; };
   }, [id]);
 
   useEffect(() => {
     let active = true;
-    apiGetServiceAvis(id)
+    setLoadingAvis(true);
+    apiGetServiceAvis(id, avisPage)
       .then((res) => {
-        if (active && res.ok) setAvisList(res.data);
+        if (!active) return;
+        if (res.ok) {
+          const data = res.data;
+          setAvisList(Array.isArray(data) ? data : data.data ?? []);
+          if (data.last_page) setAvisLastPage(data.last_page);
+        }
       })
       .finally(() => {
         if (active) setLoadingAvis(false);
       });
-    return () => {
-      active = false;
-    };
-  }, [id]);
+    return () => { active = false; };
+  }, [id, avisPage]);
 
   useEffect(() => {
     if (!localStorage.getItem("token")) return;
@@ -102,7 +106,7 @@ export default function ServiceDetailPage() {
           </Link>
 
           <div className="bg-[#F0F7F4] rounded-2xl p-6 flex flex-col sm:flex-row sm:items-center gap-5 mb-8">
-            <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center font-semibold text-xl text-[#0E9F6E] flex-shrink-0">
+            <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center font-semibold text-xl text-[#0E9F6E] shrink-0">
               {(prestataire?.prenom?.[0] || "?").toUpperCase()}
               {(prestataire?.nom?.[0] || "").toUpperCase()}
             </div>
@@ -127,18 +131,14 @@ export default function ServiceDetailPage() {
                 {categorie?.nom_categorie && <span>{categorie.nom_categorie}</span>}
               </div>
             </div>
-            <div className="text-right flex-shrink-0">
+            <div className="text-right shrink-0">
               <p className="text-lg font-semibold text-[#0B2B26]">
                 {tarif ? `${Number(tarif).toLocaleString("fr-FR")} F` : "Sur devis"}
               </p>
               {disponibilite ? (
-                <span className="inline-block mt-1 text-xs font-medium text-[#0E9F6E]">
-                  Disponible
-                </span>
+                <span className="inline-block mt-1 text-xs font-medium text-[#0E9F6E]">Disponible</span>
               ) : (
-                <span className="inline-block mt-1 text-xs font-medium text-[#7A9C90]">
-                  Occupé
-                </span>
+                <span className="inline-block mt-1 text-xs font-medium text-[#7A9C90]">Occupé</span>
               )}
               {disponibilite ? (
                 <Link
@@ -191,6 +191,26 @@ export default function ServiceDetailPage() {
                     onSignaled={handleSignaled}
                   />
                 ))}
+              </div>
+            )}
+
+            {avisLastPage > 1 && (
+              <div className="flex justify-center gap-3 mt-6">
+                <button
+                  onClick={() => setAvisPage((p) => Math.max(1, p - 1))}
+                  disabled={avisPage === 1}
+                  className="px-4 py-2 rounded-full border border-[#DCEBE3] text-sm font-medium text-[#3D5A50] disabled:opacity-40"
+                >
+                  Précédent
+                </button>
+                <span className="px-4 py-2 text-sm text-[#7A9C90]">{avisPage} / {avisLastPage}</span>
+                <button
+                  onClick={() => setAvisPage((p) => Math.min(avisLastPage, p + 1))}
+                  disabled={avisPage === avisLastPage}
+                  className="px-4 py-2 rounded-full border border-[#DCEBE3] text-sm font-medium text-[#3D5A50] disabled:opacity-40"
+                >
+                  Suivant
+                </button>
               </div>
             )}
           </div>

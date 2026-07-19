@@ -23,19 +23,24 @@ export default function Dashboard() {
   const [reservations, setReservations] = useState([])
   const [recommandes, setRecommandes]   = useState([])
   const [loading, setLoading]           = useState(true)
+  const [currentPage, setCurrentPage]   = useState(1)
+  const [lastPage, setLastPage]         = useState(1)
 
   useEffect(() => {
-    Promise.all([apiGetMe(), apiGetReservations(), apiGetServices()]).then(
+    Promise.all([apiGetMe(), apiGetReservations(currentPage), apiGetServices()]).then(
       ([me, reservationsRes, servicesRes]) => {
         if (me.ok) setUser(me.data)
 
         if (reservationsRes.ok) {
-          setReservations(Array.isArray(reservationsRes.data) ? reservationsRes.data : [])
+          const data = reservationsRes.data
+          setReservations(Array.isArray(data) ? data : data.data ?? [])
+          if (data.last_page) setLastPage(data.last_page)
         }
 
         if (servicesRes.ok) {
+          const servicesData = Array.isArray(servicesRes.data) ? servicesRes.data : servicesRes.data.data ?? []
           const parPrestataire = new Map()
-          servicesRes.data.forEach((s) => {
+          servicesData.forEach((s) => {
             if (s.prestataire && !parPrestataire.has(s.id_prestataire)) {
               parPrestataire.set(s.id_prestataire, s)
             }
@@ -46,7 +51,7 @@ export default function Dashboard() {
         setLoading(false)
       }
     )
-  }, [])
+  }, [currentPage])
 
   async function handleLogout() {
     await apiLogout()
@@ -81,7 +86,7 @@ export default function Dashboard() {
     return true
   }
 
-  const aVenir = reservations.filter((r) => ['en_attente', 'confirmee'].includes(r.statut))
+  const aVenir = reservations.filter((r) => ['confirmee'].includes(r.statut))
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-babi-cream">
@@ -185,13 +190,34 @@ export default function Dashboard() {
         )}
 
         {vue === 'reservations' && (
-          <VueReservations
-            reservations={reservations}
-            loading={loading}
-            onCancel={handleCancel}
-            onMarkTerminee={handleMarkTerminee}
-            onRate={handleRate}
-          />
+          <>
+            <VueReservations
+              reservations={reservations}
+              loading={loading}
+              onCancel={handleCancel}
+              onMarkTerminee={handleMarkTerminee}
+              onRate={handleRate}
+            />
+            {lastPage > 1 && (
+              <div className="flex justify-center gap-3 mt-6">
+                <button
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 rounded-full border border-gray-200 text-sm font-semibold disabled:opacity-40"
+                >
+                  Précédent
+                </button>
+                <span className="px-4 py-2 text-sm text-gray-500">{currentPage} / {lastPage}</span>
+                <button
+                  onClick={() => setCurrentPage((p) => Math.min(lastPage, p + 1))}
+                  disabled={currentPage === lastPage}
+                  className="px-4 py-2 rounded-full border border-gray-200 text-sm font-semibold disabled:opacity-40"
+                >
+                  Suivant
+                </button>
+              </div>
+            )}
+          </>
         )}
 
         {vue === 'parametres' && (
