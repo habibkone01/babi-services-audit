@@ -188,6 +188,7 @@ function PrestatairesAdmin() {
                       <button
                         onClick={() => openEditModal(prestataire)}
                         className="w-8 h-8 rounded-lg bg-gray-50 text-gray-600 flex items-center justify-center hover:bg-gray-100 transition-colors"
+                        aria-label="Modifier ce prestataire"
                         title="Modifier"
                       >
                         <PencilIcon />
@@ -195,6 +196,7 @@ function PrestatairesAdmin() {
                       <button
                         onClick={() => handleDelete(prestataire.id_prestataire)}
                         className="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center hover:bg-rose-100 transition-colors"
+                        aria-label="Supprimer ce prestataire"
                         title="Supprimer"
                       >
                         <TrashIcon />

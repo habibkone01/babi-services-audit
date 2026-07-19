@@ -201,6 +201,7 @@ function ServicesAdmin() {
                         onClick={() => openEditModal(service)}
                         className="w-8 h-8 rounded-lg bg-gray-50 text-gray-600 flex items-center justify-center hover:bg-gray-100 transition-colors"
                         title="Modifier"
+                        aria-label="Modifier ce service"
                       >
                         <PencilIcon />
                       </button>
@@ -208,6 +209,7 @@ function ServicesAdmin() {
                         onClick={() => handleDelete(service.id_service)}
                         className="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center hover:bg-rose-100 transition-colors"
                         title="Supprimer"
+                        aria-label="Supprimer ce service"
                       >
                         <TrashIcon />
                       </button>

@@ -77,7 +77,9 @@ export default function FilterSidebar({ filters, onChange, onReset }) {
       {/* Quartier */}
       <div>
         <h3 className="text-sm font-semibold text-[#0B2B26] mb-3">Quartier</h3>
+        <label htmlFor="filtre-quartier" className="sr-only">Filtrer par quartier</label>
         <select
+          id="filtre-quartier"
           value={quartier}
           onChange={(e) => onChange({ ...filters, quartier: e.target.value })}
           className="w-full px-3 py-2.5 rounded-lg border border-[#DCEBE3] bg-white text-sm text-[#0B2B26] focus:outline-none focus:ring-2 focus:ring-[#0E9F6E]/30"
@@ -118,6 +120,7 @@ export default function FilterSidebar({ filters, onChange, onReset }) {
         </div>
         <button
           type="button"
+          aria-label="Afficher uniquement les services disponibles"
           aria-pressed={disponiblesSeulement}
           onClick={() => onChange({ ...filters, disponiblesSeulement: !disponiblesSeulement })}
           className={`w-11 h-6 rounded-full relative transition-colors flex-shrink-0 ${
