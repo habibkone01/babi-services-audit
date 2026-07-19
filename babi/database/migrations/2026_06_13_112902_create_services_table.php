@@ -19,10 +19,11 @@ return new class extends Migration
             $table->decimal('tarif', 10, 2);
             $table->boolean('disponibilite')->default(true);
             $table->unsignedBigInteger('id_prestataire');
-            $table->foreign('id_prestataire')->references('id_prestataire')->on('prestataires');
+            $table->foreign('id_prestataire')->references('id_prestataire')->on('prestataires')->onDelete('cascade');
             $table->unsignedBigInteger('id_categorie');
-            $table->foreign('id_categorie')->references('id_categorie')->on('categories');
+            $table->foreign('id_categorie')->references('id_categorie')->on('categories')->onDelete('cascade');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

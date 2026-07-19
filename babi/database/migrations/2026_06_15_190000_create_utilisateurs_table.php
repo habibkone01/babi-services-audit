@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('adresse')->nullable();
             $table->enum('role', ['client', 'prestataire', 'admin'])->default('client');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

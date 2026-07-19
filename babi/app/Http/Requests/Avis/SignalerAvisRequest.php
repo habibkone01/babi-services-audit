@@ -7,7 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class UpdateAvisRequest extends FormRequest
+class SignalerAvisRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,20 +25,16 @@ class UpdateAvisRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'note'        => 'sometimes|integer|min:1|max:5',
-            'commentaire' => 'nullable|string',
-            'date_avis'   => 'sometimes|date',
+            'motif' => 'required|string|max:255',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'note.integer'       => 'La note doit être un entier.',
-            'note.min'           => 'La note doit être au minimum 1.',
-            'note.max'           => 'La note doit être au maximum 5.',
-            'commentaire.string' => 'Le commentaire doit être une chaîne de caractères.',
-            'date_avis.date'     => 'La date de l\'avis doit être une date valide.',
+            'motif.required' => 'Le motif du signalement est obligatoire.',
+            'motif.string'   => 'Le motif doit être une chaîne de caractères.',
+            'motif.max'      => 'Le motif ne peut pas dépasser 255 caractères.',
         ];
     }
 

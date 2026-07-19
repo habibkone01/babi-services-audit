@@ -15,11 +15,11 @@ return new class extends Migration
             $table->id('id_reservation');
             $table->date('date_reservation');
             $table->time('heure_reservation');
-            $table->enum('statut', ['en_attente', 'confirmee', 'annulee', 'terminee'])->default('en_attente');
+            $table->enum('statut', ['confirmee', 'annulee', 'terminee'])->default('confirmee');
             $table->unsignedBigInteger('id_utilisateur');
-            $table->foreign('id_utilisateur')->references('id_utilisateur')->on('utilisateurs');
+            $table->foreign('id_utilisateur')->references('id_utilisateur')->on('utilisateurs')->onDelete('cascade');
             $table->unsignedBigInteger('id_service');
-            $table->foreign('id_service')->references('id_service')->on('services');
+            $table->foreign('id_service')->references('id_service')->on('services')->onDelete('cascade');
             $table->timestamps();
         });
     }

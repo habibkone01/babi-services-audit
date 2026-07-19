@@ -7,7 +7,7 @@ use App\Models\Avis;
 use App\Models\Reservation;
 use App\Http\Requests\Avis\StoreAvisRequest;
 use App\Http\Requests\Avis\UpdateAvisRequest;
-use Illuminate\Http\Request;
+use App\Http\Requests\Avis\SignalerAvisRequest;
 
 class AvisController extends Controller
 {
@@ -57,19 +57,15 @@ class AvisController extends Controller
      * Signale un avis comme inapproprié. Il est alors masqué de la liste publique
      * et exclu du calcul de la note moyenne, en attente de modération.
      */
-    public function signaler(Request $request, string $id)
+    public function signaler(SignalerAvisRequest $request, string $id)
     {
-        $request->validate([
-            'motif' => 'required|string|max:255',
-        ]);
-
         $avis = Avis::findOrFail($id);
         abort_if($avis->id_utilisateur === auth()->id(), 422, "Vous ne pouvez pas signaler votre propre avis.");
 
         $avis->update([
-            'signale' => true,
-            'motif_signalement' => $request->input('motif'),
-            'signale_par' => auth()->id(),
+            'signale'           => true,
+            'motif_signalement' => $request->validated()['motif'],
+            'signale_par'       => auth()->id(),
         ]);
 
         return response()->json(['message' => 'Avis signalé, il sera examiné par un modérateur.']);

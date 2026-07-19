@@ -17,9 +17,9 @@ return new class extends Migration
             $table->text('commentaire')->nullable();
             $table->date('date_avis');
             $table->unsignedBigInteger('id_utilisateur');
-            $table->foreign('id_utilisateur')->references('id_utilisateur')->on('utilisateurs');
+            $table->foreign('id_utilisateur')->references('id_utilisateur')->on('utilisateurs')->onDelete('cascade');
             $table->unsignedBigInteger('id_reservation')->unique();
-            $table->foreign('id_reservation')->references('id_reservation')->on('reservations');
+            $table->foreign('id_reservation')->references('id_reservation')->on('reservations')->onDelete('cascade');
             $table->timestamps();
         });
     }

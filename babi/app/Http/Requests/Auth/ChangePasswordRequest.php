@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Requests\Avis;
+namespace App\Http\Requests\Auth;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class UpdateAvisRequest extends FormRequest
+class ChangePasswordRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,20 +25,20 @@ class UpdateAvisRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'note'        => 'sometimes|integer|min:1|max:5',
-            'commentaire' => 'nullable|string',
-            'date_avis'   => 'sometimes|date',
+            'ancien_mot_de_passe'  => 'required|string',
+            'nouveau_mot_de_passe' => 'required|string|min:8|confirmed',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'note.integer'       => 'La note doit être un entier.',
-            'note.min'           => 'La note doit être au minimum 1.',
-            'note.max'           => 'La note doit être au maximum 5.',
-            'commentaire.string' => 'Le commentaire doit être une chaîne de caractères.',
-            'date_avis.date'     => 'La date de l\'avis doit être une date valide.',
+            'ancien_mot_de_passe.required'       => 'L\'ancien mot de passe est obligatoire.',
+            'ancien_mot_de_passe.string'          => 'L\'ancien mot de passe doit être une chaîne de caractères.',
+            'nouveau_mot_de_passe.required'       => 'Le nouveau mot de passe est obligatoire.',
+            'nouveau_mot_de_passe.string'         => 'Le nouveau mot de passe doit être une chaîne de caractères.',
+            'nouveau_mot_de_passe.min'            => 'Le nouveau mot de passe doit contenir au moins 8 caractères.',
+            'nouveau_mot_de_passe.confirmed'      => 'La confirmation du nouveau mot de passe ne correspond pas.',
         ];
     }
 
