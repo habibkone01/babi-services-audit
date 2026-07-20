@@ -31,7 +31,7 @@ class AvisController extends Controller
         return response()->json(
             Avis::with('utilisateur')
                 ->where('signale', false)
-                ->whereHas('reservation', fn ($q) => $q->where('id_service', $id_service))
+                ->whereHas('reservation', fn($q) => $q->where('id_service', $id_service))
                 ->orderByDesc('date_avis')
                 ->paginate(10)
         );
@@ -68,6 +68,39 @@ class AvisController extends Controller
         ]);
 
         return response()->json(['message' => 'Avis signalé, il sera examiné par un modérateur.']);
+    }
+
+    /**
+     * Innocente un avis signalé (admin) — remet signale à false
+     */
+    public function innocenterAdmin(Avis $avis)
+    {
+        $avis->update([
+            'signale'           => false,
+            'motif_signalement' => null,
+            'signale_par'       => null,
+        ]);
+        return response()->json(['message' => 'Avis remis en ligne.']);
+    }
+
+    /**
+     * Liste tous les avis signalés (admin seulement)
+     */
+    public function signales()
+    {
+        $avis = Avis::where('signale', true)
+            ->with(['utilisateur', 'reservation.service'])
+            ->get();
+        return response()->json($avis);
+    }
+
+    /**
+     * Supprime un avis (admin, bypass propriétaire)
+     */
+    public function destroyAdmin(Avis $avis)
+    {
+        $avis->delete();
+        return response()->json(['message' => 'Avis supprimé.']);
     }
 
     /**

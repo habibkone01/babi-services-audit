@@ -42,5 +42,8 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
         Route::delete('utilisateurs/{id}',               [AdminDashboardController::class, 'deleteUtilisateur']);
         Route::delete('utilisateurs/prestataires/{id}',  [AdminDashboardController::class, 'deletePrestataire']);
         Route::get('missions',                           [AdminDashboardController::class, 'missions']);
+        Route::get('avis/signales',                      [AvisController::class, 'signales']);
+        Route::patch('avis/{avis}/innocenter', [AvisController::class, 'innocenterAdmin']);
+        Route::delete('avis/{avis}',                     [AvisController::class, 'destroyAdmin']);
     });
 });

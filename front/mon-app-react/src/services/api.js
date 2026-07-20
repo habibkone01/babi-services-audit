@@ -312,3 +312,26 @@ export const apiGetServiceById = async (id) => {
   if (!res.ok) throw new Error(`Erreur API ${res.status}`)
   return res.json()
 }
+
+export const apiGetAvisSignales = async () => {
+  const res = await fetch(`${API_URL}/api/admin/avis/signales`, {
+    headers: getAuthHeaders(),
+  })
+  return { ok: res.ok, data: await res.json() }
+}
+
+export const apiDeleteAvisAdmin = async (id) => {
+  const res = await fetch(`${API_URL}/api/admin/avis/${id}`, {
+    method: 'DELETE',
+    headers: getHeaders(),
+  })
+  return { ok: res.ok }
+}
+
+export const apiInnocenterAvisAdmin = async (id) => {
+  const res = await fetch(`${API_URL}/api/admin/avis/${id}/innocenter`, {
+    method: 'PATCH',
+    headers: getHeaders(),
+  })
+  return { ok: res.ok, data: await res.json() }
+}

@@ -59,8 +59,8 @@ class Avis extends Model
             return;
         }
 
+        // Les avis signalés restent dans le calcul jusqu'à suppression définitive par l'admin
         $moyenne = self::query()
-            ->where('signale', false)
             ->whereHas('reservation.service', fn ($q) => $q->where('id_prestataire', $idPrestataire))
             ->avg('note');
 

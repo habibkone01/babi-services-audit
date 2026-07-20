@@ -5,6 +5,9 @@ import {
   apiValiderPrestataire,
   apiRejeterPrestataire,
   apiCreateService,
+  apiGetAvisSignales,
+  apiDeleteAvisAdmin,
+  apiInnocenterAvisAdmin,
 } from '../services/api'
 
 const CheckIcon = () => (
@@ -16,6 +19,18 @@ const CheckIcon = () => (
 const CloseIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="none">
     <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+)
+
+const TrashIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="none">
+    <path d="M2.5 5H17.5M7.5 5V3.33333C7.5 2.8731 7.8731 2.5 8.33333 2.5H11.6667C12.1269 2.5 12.5 2.8731 12.5 3.33333V5M15.8333 5V16.6667C15.8333 17.1269 15.4602 17.5 15 17.5H5C4.53976 17.5 4.16667 17.1269 4.16667 16.6667V5H15.8333Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+)
+
+const ShieldCheckIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="none">
+    <path d="M10 1.66699L3.33333 4.16699V9.16699C3.33333 13.0003 6.19999 16.6003 10 17.5003C13.8 16.6003 16.6667 13.0003 16.6667 9.16699V4.16699L10 1.66699ZM8.33333 12.5003L5.83333 10.0003L7.00833 8.82533L8.33333 10.1503L12.9917 5.49199L14.1667 6.66699L8.33333 12.5003Z" fill="currentColor"/>
   </svg>
 )
 
@@ -44,10 +59,18 @@ function ValidationsAdmin() {
   const [error, setError] = useState('')
   const [saving, setSaving] = useState(false)
 
+  const [avisSignales, setAvisSignales] = useState([])
+  const [loadingAvis, setLoadingAvis] = useState(true)
+
   useEffect(() => {
     apiGetAdminDashboard().then((res) => {
       if (res.ok) setAValider(res.data.a_valider)
       setLoading(false)
+    })
+
+    apiGetAvisSignales().then((res) => {
+      if (res.ok) setAvisSignales(Array.isArray(res.data) ? res.data : res.data.data ?? [])
+      setLoadingAvis(false)
     })
   }, [])
 
@@ -66,6 +89,22 @@ function ValidationsAdmin() {
     const res = await apiRejeterPrestataire(id)
     if (res.ok) {
       setAValider((prev) => prev.filter((p) => p.id_prestataire !== id))
+    }
+  }
+
+  async function handleSupprimerAvis(id) {
+    if (!confirm('Supprimer cet avis définitivement ?')) return
+    const res = await apiDeleteAvisAdmin(id)
+    if (res.ok) {
+      setAvisSignales((prev) => prev.filter((a) => a.id_avis !== id))
+    }
+  }
+
+  async function handleInnocenterAvis(id) {
+    if (!confirm('Remettre cet avis en ligne ?')) return
+    const res = await apiInnocenterAvisAdmin(id)
+    if (res.ok) {
+      setAvisSignales((prev) => prev.filter((a) => a.id_avis !== id))
     }
   }
 
@@ -104,7 +143,8 @@ function ValidationsAdmin() {
       subtitle="Prestataires en attente : validez leur profil et publiez leur première annonce"
       validationsCount={aValider.length}
     >
-      <div className="bg-white rounded-2xl p-6 border border-gray-100">
+      {/* Section prestataires en attente */}
+      <div className="bg-white rounded-2xl p-6 border border-gray-100 mb-8">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -144,6 +184,7 @@ function ValidationsAdmin() {
                         onClick={() => handleRejeter(prestataire.id_prestataire)}
                         className="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center hover:bg-rose-100 transition-colors"
                         title="Rejeter"
+                        aria-label="Rejeter ce prestataire"
                       >
                         <CloseIcon />
                       </button>
@@ -154,6 +195,70 @@ function ValidationsAdmin() {
               {!loading && aValider.length === 0 && (
                 <tr>
                   <td colSpan={6} className="py-6 text-center text-gray-500">Aucun prestataire en attente de validation.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Section avis signalés */}
+      <div className="bg-white rounded-2xl p-6 border border-gray-100">
+        <h2 className="text-base font-bold text-babi-dark mb-4">Avis signalés</h2>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-left text-xs text-gray-400 uppercase tracking-wider">
+                <th className="font-semibold pb-3 pr-4">Auteur</th>
+                <th className="font-semibold pb-3 pr-4">Note</th>
+                <th className="font-semibold pb-3 pr-4">Commentaire</th>
+                <th className="font-semibold pb-3 pr-4">Service</th>
+                <th className="font-semibold pb-3 pr-4">Motif</th>
+                <th className="font-semibold pb-3">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {avisSignales.map((avis) => (
+                <tr key={avis.id_avis} className="border-t border-gray-100">
+                  <td className="py-3 pr-4">
+                    <div className="flex items-center gap-2">
+                      <span className="w-7 h-7 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center text-xs font-bold shrink-0">
+                        {initials(avis.utilisateur?.prenom, avis.utilisateur?.nom)}
+                      </span>
+                      <span className="font-semibold text-babi-dark">{avis.utilisateur?.prenom} {avis.utilisateur?.nom}</span>
+                    </div>
+                  </td>
+                  <td className="py-3 pr-4">
+                    <span className="font-semibold text-babi-dark">{avis.note}/5</span>
+                  </td>
+                  <td className="py-3 pr-4 text-gray-500 max-w-[200px] truncate">{avis.commentaire ?? '—'}</td>
+                  <td className="py-3 pr-4 text-gray-500">{avis.reservation?.service?.nom_service ?? '—'}</td>
+                  <td className="py-3 pr-4 text-rose-600 text-xs">{avis.motif_signalement ?? '—'}</td>
+                  <td className="py-3">
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleInnocenterAvis(avis.id_avis)}
+                        className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center hover:bg-emerald-100 transition-colors"
+                        title="Innocenter — remettre en ligne"
+                        aria-label="Remettre cet avis en ligne"
+                      >
+                        <ShieldCheckIcon />
+                      </button>
+                      <button
+                        onClick={() => handleSupprimerAvis(avis.id_avis)}
+                        className="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center hover:bg-rose-100 transition-colors"
+                        title="Supprimer définitivement"
+                        aria-label="Supprimer cet avis définitivement"
+                      >
+                        <TrashIcon />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {!loadingAvis && avisSignales.length === 0 && (
+                <tr>
+                  <td colSpan={6} className="py-6 text-center text-gray-500">Aucun avis signalé pour le moment.</td>
                 </tr>
               )}
             </tbody>
