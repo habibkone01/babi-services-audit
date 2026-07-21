@@ -107,7 +107,7 @@ class AvisTest extends TestCase
         $response = $this->getJson('/api/avis');
 
         $response->assertOk();
-        $this->assertCount(1, $response->json());
+        $this->assertCount(1, $response->json('data'));
     }
 
     public function test_show_refuse_si_on_nest_pas_lauteur(): void
@@ -158,7 +158,7 @@ class AvisTest extends TestCase
         $this->assertFalse($avis->fresh()->signale);
     }
 
-    public function test_signaler_lavis_dun_autre_utilisateur_le_masque_et_lexclut_de_la_moyenne(): void
+    public function test_signaler_lavis_dun_autre_utilisateur_le_masque_mais_reste_dans_la_moyenne(): void
     {
         $auteur = Utilisateur::factory()->create();
         $signaleur = Utilisateur::factory()->create();
@@ -183,7 +183,7 @@ class AvisTest extends TestCase
         $avis->refresh();
         $this->assertTrue($avis->signale);
         $this->assertSame($signaleur->id_utilisateur, $avis->signale_par);
-        $this->assertEquals(0, $prestataire->fresh()->note_moyenne);
+        $this->assertEquals(1, $prestataire->fresh()->note_moyenne);
     }
 
     public function test_parservice_ne_retourne_pas_les_avis_signales(): void
@@ -200,10 +200,10 @@ class AvisTest extends TestCase
         $response = $this->getJson("/api/services/{$service->id_service}/avis");
 
         $response->assertOk();
-        $this->assertCount(1, $response->json());
+        $this->assertCount(1, $response->json('data'));
         $this->assertSame(
             $reservationVisible->id_reservation,
-            $response->json('0.id_reservation')
+            $response->json('data.0.id_reservation')
         );
     }
 

@@ -79,8 +79,7 @@
                 "laravel/pail",
                 "laravel/pao",
                 "laravel/sentinel",
-                "laravel/telescope",
-                "nunomaduro/collision"
+                "laravel/telescope"
             ]
         }
     },

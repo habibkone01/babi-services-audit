@@ -34,7 +34,7 @@ class ReservationTest extends TestCase
             'date_reservation' => '2026-07-10',
             'heure_reservation' => '10:00',
             'id_service' => $service->id_service,
-            'statut' => 'terminee', // doit être ignoré
+            'statut' => 'terminee',
         ]);
 
         $response->assertStatus(201)
@@ -56,8 +56,8 @@ class ReservationTest extends TestCase
         $response = $this->getJson('/api/reservations');
 
         $response->assertOk();
-        $this->assertCount(1, $response->json());
-        $this->assertSame($client1->id_utilisateur, $response->json('0.id_utilisateur'));
+        $this->assertCount(1, $response->json('data'));
+        $this->assertSame($client1->id_utilisateur, $response->json('data.0.id_utilisateur'));
     }
 
     public function test_admin_voit_toutes_les_reservations(): void
@@ -70,7 +70,7 @@ class ReservationTest extends TestCase
         $response = $this->getJson('/api/reservations');
 
         $response->assertOk();
-        $this->assertCount(3, $response->json());
+        $this->assertCount(3, $response->json('data'));
     }
 
     public function test_show_refuse_si_on_nest_pas_le_proprietaire(): void

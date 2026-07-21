@@ -17,7 +17,8 @@ class PrestataireTest extends TestCase
     {
         $prestataire = Prestataire::factory()->create();
 
-        $this->getJson('/api/prestataires')->assertOk();
+        $response = $this->getJson('/api/prestataires');
+        $response->assertOk()->assertJsonStructure(['data', 'current_page', 'last_page']);
         $this->getJson("/api/prestataires/{$prestataire->id_prestataire}")->assertOk();
     }
 
@@ -90,7 +91,7 @@ class PrestataireTest extends TestCase
         Sanctum::actingAs($admin);
 
         $this->deleteJson("/api/prestataires/{$prestataire->id_prestataire}")->assertOk();
-        $this->assertDatabaseMissing('prestataires', ['id_prestataire' => $prestataire->id_prestataire]);
+        $this->assertSoftDeleted('prestataires', ['id_prestataire' => $prestataire->id_prestataire]);
     }
 
     public function test_un_client_ne_peut_pas_supprimer_un_prestataire(): void

@@ -57,7 +57,8 @@ class CategorieServiceTest extends TestCase
     {
         $service = Service::factory()->create();
 
-        $this->getJson('/api/services')->assertOk();
+        $response = $this->getJson('/api/services');
+        $response->assertOk()->assertJsonStructure(['data', 'current_page', 'last_page']);
         $this->getJson("/api/services/{$service->id_service}")->assertOk();
     }
 
@@ -104,6 +105,6 @@ class CategorieServiceTest extends TestCase
         Sanctum::actingAs($admin);
 
         $this->deleteJson("/api/services/{$service->id_service}")->assertOk();
-        $this->assertDatabaseMissing('services', ['id_service' => $service->id_service]);
+        $this->assertSoftDeleted('services', ['id_service' => $service->id_service]);
     }
 }

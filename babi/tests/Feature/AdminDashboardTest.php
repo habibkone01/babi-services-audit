@@ -93,7 +93,7 @@ class AdminDashboardTest extends TestCase
         $this->deleteJson("/api/admin/utilisateurs/{$client->id_utilisateur}")
             ->assertOk();
 
-        $this->assertDatabaseMissing('utilisateurs', ['id_utilisateur' => $client->id_utilisateur]);
+        $this->assertSoftDeleted('utilisateurs', ['id_utilisateur' => $client->id_utilisateur]);
     }
 
     public function test_missions_necessite_un_admin(): void

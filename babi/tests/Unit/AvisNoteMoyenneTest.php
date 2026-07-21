@@ -16,7 +16,6 @@ class AvisNoteMoyenneTest extends TestCase
     private function reservationPour(Prestataire $prestataire): Reservation
     {
         $service = Service::factory()->create(['id_prestataire' => $prestataire->id_prestataire]);
-
         return Reservation::factory()->terminee()->create(['id_service' => $service->id_service]);
     }
 
@@ -24,7 +23,6 @@ class AvisNoteMoyenneTest extends TestCase
     {
         $prestataire = Prestataire::factory()->create(['note_moyenne' => 5]);
 
-        // Forcer un recalcul sans aucun avis existant
         $reservation = $this->reservationPour($prestataire);
         $avis = Avis::factory()->create(['id_reservation' => $reservation->id_reservation, 'note' => 3]);
         $avis->delete();
@@ -59,7 +57,7 @@ class AvisNoteMoyenneTest extends TestCase
         $this->assertEquals(1, $prestataireB->fresh()->note_moyenne);
     }
 
-    public function test_un_avis_signale_est_exclu_du_calcul(): void
+    public function test_un_avis_signale_reste_dans_le_calcul(): void
     {
         $prestataire = Prestataire::factory()->create();
 
@@ -69,10 +67,35 @@ class AvisNoteMoyenneTest extends TestCase
         $reservation2 = $this->reservationPour($prestataire);
         Avis::factory()->create([
             'id_reservation' => $reservation2->id_reservation,
-            'note' => 1,
+            'note'    => 1,
             'signale' => true,
         ]);
 
+        // Moyenne = (5 + 1) / 2 = 3 — l'avis signalé est toujours inclus
+        $this->assertEquals(3, $prestataire->fresh()->note_moyenne);
+    }
+
+    /**
+     * Un avis supprimé définitivement est exclu du calcul.
+     */
+    public function test_un_avis_supprime_est_exclu_du_calcul(): void
+    {
+        $prestataire = Prestataire::factory()->create();
+
+        $reservation1 = $this->reservationPour($prestataire);
+        Avis::factory()->create(['id_reservation' => $reservation1->id_reservation, 'note' => 5]);
+
+        $reservation2 = $this->reservationPour($prestataire);
+        $avisSignale = Avis::factory()->create([
+            'id_reservation' => $reservation2->id_reservation,
+            'note'    => 1,
+            'signale' => true,
+        ]);
+
+        // L'admin supprime définitivement l'avis signalé
+        $avisSignale->delete();
+
+        // Seul l'avis à 5 reste — moyenne = 5
         $this->assertEquals(5, $prestataire->fresh()->note_moyenne);
     }
 
