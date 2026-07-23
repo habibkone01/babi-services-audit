@@ -1,0 +1,31 @@
+version: 2
+updates:
+
+  # Surveillance des dépendances PHP (Composer)
+  - package-ecosystem: "composer"
+    directory: "/babi"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "php"
+
+  # Surveillance des dépendances JavaScript (npm)
+  - package-ecosystem: "npm"
+    directory: "/front/mon-app-react"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "javascript"
+
+  # Surveillance des actions GitHub
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "github-actions"
