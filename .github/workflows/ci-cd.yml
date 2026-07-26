@@ -149,11 +149,11 @@ jobs:
         run: npm install -g @railway/cli
 
       - name: Deploy backend
-        run: railway redeploy --service e64f19f6-8650-4981-b39a-f52dd758c841 --environment cf72ac4f-363d-42c5-99e7-633a1c0f381f --yes
+        run: railway redeploy --service 68ab0711-f8a8-4ab9-98e1-ba188d71f251 --environment 2cd94438-0371-498c-9a08-0764a66e322b --yes
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
       - name: Deploy frontend
-        run: railway redeploy --service e728ee0d-a54e-420e-85e6-33d15e4bef89 --environment cf72ac4f-363d-42c5-99e7-633a1c0f381f --yes
+        run: railway redeploy --service c529c57c-c056-461c-aae0-20a147381961 --environment 2cd94438-0371-498c-9a08-0764a66e322b --yes
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
